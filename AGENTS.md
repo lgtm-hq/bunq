@@ -11,18 +11,19 @@ Use the canonical [LGTM HQ contributing standards][contributing],
 these policies rather than copying them. Resolve current released workflow
 commit SHAs when onboarding CI; do not copy stale example pins.
 
-Bun manages the TypeScript workspace; published packages must work on the
-declared Node.js runtimes. uv manages lintro. Workspace setup (#11), quality
-setup (#13), tests (#14) and full CI (#17) define exact versions and executable
-commands. The initial quality, AI-review and aggregate workflows cover
-documentation and workflow source only; see
-[bootstrap status](docs/repository-setup.md). There is no build or test suite
-yet. Never invent a successful missing-toolchain check.
+Bun manages the TypeScript workspace; packed packages run on the Node releases
+in the root manifest. Read [the workspace contract](docs/workspace.md) for exact
+pins and generated artifacts. Run `bun install --frozen-lockfile`,
+`bun run typecheck`, `bun run build`, `bun run test:workspace` and
+`bun run verify:packages`. Typechecking emits through project references;
+there is no separate no-emit promise. Regenerate derived metadata with
+`bun run generate` and commit the result.
 
-Once configured, the quality entry points are `uv run lintro fmt`,
-`uv run lintro chk` and `uv run lintro tst`, plus the workspace's declared
-strict typecheck, build and behavioural coverage gates. Run full lintro checks;
-report unavailable tools and skipped work explicitly.
+uv manages lintro. Until quality setup (#13) defines its uv project, run
+`uv run --no-project lintro fmt` and `uv run --no-project lintro chk`.
+Run full checks without tool filters. The Workspace CI matrix checks real
+package consumers, but full behavioural coverage (#14), quality setup (#13)
+and CI onboarding (#17) remain open. Never invent a successful missing check.
 
 ## Identity routing
 

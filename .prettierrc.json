@@ -1,0 +1,16 @@
+{
+  "overrides": [
+    {
+      "files": ["package.json", "packages/*/package.json"],
+      "options": {
+        "parser": "json-stringify"
+      }
+    },
+    {
+      "files": ["*.yml", "*.yaml"],
+      "options": {
+        "singleQuote": true
+      }
+    }
+  ]
+}

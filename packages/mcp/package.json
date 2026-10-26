@@ -1,0 +1,31 @@
+{
+  "name": "@lgtm-hq/bunq-mcp",
+  "description": "bunq MCP adapter (workspace foundation; transport not implemented)",
+  "exports": {
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "lgtm-bunq-mcp": "./dist/cli.js"
+  },
+  "dependencies": {
+    "@lgtm-hq/bunq-client": "workspace:*"
+  },
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lgtm-hq/bunq.git",
+    "directory": "packages/mcp"
+  },
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": "^22.14.0 || ^24.0.0 || ^26.0.0"
+  }
+}

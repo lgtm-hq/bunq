@@ -1,0 +1,29 @@
+{
+  "name": "@lgtm-hq/bunq-client",
+  "description": "Portable bunq client (workspace foundation; API not implemented)",
+  "exports": {
+    ".": {
+      "types": "./dist/runtime.d.ts",
+      "import": "./dist/runtime.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lgtm-hq/bunq.git",
+    "directory": "packages/client"
+  },
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": "^22.14.0 || ^24.0.0 || ^26.0.0"
+  }
+}

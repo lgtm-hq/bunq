@@ -60,8 +60,9 @@ head checks there. No fork code receives review credentials or a write token.
 
 ## Outstanding gates
 
-Workspace pins (#11), full local lintro/typecheck setup (#13), behavioural tests
-and coverage (#14), complete CI/runtime checks (#17), layered security (#21),
+The [workspace contract](workspace.md) defines package pins, builds and packed
+consumer CI. Full local lintro setup (#13), behavioural tests and coverage
+(#14), complete CI/runtime checks (#17), layered security (#21),
 review-app/contributor onboarding (#22), live protections (#26) and the final
 bootstrap acceptance (#33) remain separate work. The baseline does not claim
 these capabilities are complete. The operating agreement follows the org
@@ -83,8 +84,9 @@ Until the uv project is defined, use the installed lintro with
 without tool filters. `.lintro-ignore` excludes only generated reports and the
 reusable's separate pinned tooling checkout; project source remains in scope.
 The local tool version is validation evidence, not a committed workspace pin.
-There is no application test/build target at this stage; a skipped test runner
-must not be reported as a passing suite.
+The later workspace slice adds the build and boundary checks documented in
+[the workspace contract](workspace.md). The original foundation had no
+application test/build target; no skipped runner is evidence of a passing suite.
 
 [bootstrap]: https://github.com/lgtm-hq/bunq/issues/2
 [onboarding]: https://github.com/lgtm-hq/lgtm-ci/blob/main/docs/onboarding.md
