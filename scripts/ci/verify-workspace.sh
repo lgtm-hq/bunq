@@ -17,5 +17,6 @@ assert_clean
 bun run typecheck
 bun run build
 bun run test:workspace
+bun run verify:test-gates
 bun run verify:packages
 assert_clean

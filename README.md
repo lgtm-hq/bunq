@@ -48,8 +48,9 @@ bun run verify:packages
 
 The [workspace contract](docs/workspace.md) describes generation, ESM exports,
 packed-consumer validation and current CI scope. uv-managed lintro and full
-quality commands are in the [development guide](docs/development.md); full
-coverage onboarding remains in testing issue #14.
+quality commands are in the [development guide](docs/development.md).
+The [testing guide](docs/testing.md) covers source coverage, network isolation
+and remaining banking fixture proofs in #14.
 
 Contributions follow the inherited [LGTM HQ guide][contributing] and
 [code of conduct][conduct]. Pull requests use the organisation's inherited

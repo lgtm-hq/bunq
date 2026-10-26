@@ -30,6 +30,13 @@
         "terms": ["eslint-disable", "eslint-enable"],
         "location": "start"
       }
-    ]
-  }
+    ],
+    "vitest/no-disabled-tests": "error",
+    "vitest/no-focused-tests": "error",
+    "vitest/expect-expect": "error",
+    "vitest/no-conditional-expect": "error",
+    "vitest/valid-expect": "error",
+    "vitest/valid-expect-in-promise": "error"
+  },
+  "plugins": ["unicorn", "typescript", "oxc", "vitest"]
 }

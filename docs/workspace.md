@@ -55,9 +55,9 @@ root MIT licence,
 and makes the CLI executable. No Bun API or runtime is embedded in the output.
 
 The [quality guide](development.md) documents locked uv-managed lintro, native
-tool setup and the full formatting/check commands. The workspace boundary
-tests use Node's test runner and rebuild first to avoid stale output; full
-behavioural coverage onboarding remains #14.
+tool setup and the full formatting/check commands. The [testing guide](testing.md)
+describes Vitest source coverage, isolation and built-package smoke checks.
+Banking fixture mutation proofs remain part of #14 as consumers are implemented.
 
 ## Packed consumer validation
 

@@ -39,6 +39,8 @@ async function writeJson(path, value) {
 
 // These are derived artifacts. Edit the root package.json and regenerate.
 config.engines = { node: nodeRange, bun: config.packageManager.split("@")[1] };
+// V8's provider is version-coupled to Vitest; derive its exact peer version.
+config.devDependencies["@vitest/coverage-v8"] = config.devDependencies.vitest;
 await writeJson("package.json", config);
 await writeGenerated(".bun-version", `${config.engines.bun}\n`);
 const sourceConfig = JSON.parse(await readFile(new URL("tsconfig.json", root), "utf8"));
