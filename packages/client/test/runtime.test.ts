@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { assertSupportedNodeRuntime } from "../src/runtime.js";
+import { NODE_RANGE } from "../src/runtime-support.js";
 
 describe("supported consumer runtime boundary", () => {
   it.each(["22.14.0", "22.22.1", "22.14.1", "24.0.0", "24.1.0", "26.0.0"])(
@@ -24,7 +25,7 @@ describe("supported consumer runtime boundary", () => {
     "v22.14.0",
   ])("rejects Node %s with remediation", (version) => {
     expect(() => assertSupportedNodeRuntime(version)).toThrow(
-      `Unsupported Node.js ${version}; bunq requires`,
+      new Error(`Unsupported Node.js ${version}; bunq requires ${NODE_RANGE}.`),
     );
   });
 });

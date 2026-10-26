@@ -44,6 +44,9 @@ ${cases
 `,
   );
   async function run({ include, coverage = false, thresholds = true, expectedStatus = 1 }) {
+    // Missing reports must fail; a previous probe is never evidence for this run.
+    await rm(`${temporary}/results.json`, { force: true });
+    await rm(`${temporary}/coverage`, { recursive: true, force: true });
     await writeFile(
       `${temporary}/config.ts`,
       `

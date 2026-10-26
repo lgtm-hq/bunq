@@ -6,11 +6,33 @@ import { expect, it } from "vitest";
 
 const config = JSON.parse(await readFile(new URL("../../package.json", import.meta.url), "utf8"));
 
-it("rejects an npm user agent when the toolchain hook runs", () => {
-  const result = spawnSync(process.execPath, ["scripts/check-toolchain.mjs"], {
-    cwd: new URL("../../", import.meta.url),
-    encoding: "utf8",
-    env: { ...process.env, npm_config_user_agent: "npm/11.0.0" },
+async function runHook({ bunVersion, userAgent }: { bunVersion: string; userAgent: string }) {
+  const temporary = await mkdtemp(join(tmpdir(), "bunq-toolchain-test-"));
+  try {
+    await writeFile(
+      join(temporary, "bun"),
+      "#!/bin/sh\nprintf '%s\\n' \"$BUNQ_TEST_BUN_VERSION\"\n",
+      { mode: 0o755 },
+    );
+    return spawnSync(process.execPath, ["scripts/check-toolchain.mjs"], {
+      cwd: new URL("../../", import.meta.url),
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        PATH: `${temporary}:${process.env.PATH}`,
+        BUNQ_TEST_BUN_VERSION: bunVersion,
+        npm_config_user_agent: userAgent,
+      },
+    });
+  } finally {
+    await rm(temporary, { recursive: true, force: true });
+  }
+}
+
+it("rejects an npm user agent when the toolchain hook runs", async () => {
+  const result = await runHook({
+    bunVersion: config.packageManager.slice("bun@".length),
+    userAgent: "npm/11.0.0",
   });
   expect(result.status).toBe(1);
   expect(result.stderr).toMatch(/not npm\/11\.0\.0/);
@@ -19,18 +41,8 @@ it("rejects an npm user agent when the toolchain hook runs", () => {
 });
 
 it("rejects a Bun executable reporting a version other than the canonical pin", async () => {
-  const temporary = await mkdtemp(join(tmpdir(), "bunq-toolchain-test-"));
-  try {
-    await writeFile(join(temporary, "bun"), "#!/bin/sh\nprintf '0.0.0\\n'\n", { mode: 0o755 });
-    const result = spawnSync(process.execPath, ["scripts/check-toolchain.mjs"], {
-      cwd: new URL("../../", import.meta.url),
-      encoding: "utf8",
-      env: { ...process.env, PATH: `${temporary}:${process.env.PATH}` },
-    });
-    expect(result.status).toBe(1);
-    expect(result.stderr).toContain(`This workspace requires ${config.packageManager}.`);
-    expect(result.stderr).toMatch(/bun install --frozen-lockfile/);
-  } finally {
-    await rm(temporary, { recursive: true, force: true });
-  }
+  const result = await runHook({ bunVersion: "0.0.0", userAgent: "bun/0.0.0" });
+  expect(result.status).toBe(1);
+  expect(result.stderr).toContain(`This workspace requires ${config.packageManager}.`);
+  expect(result.stderr).toMatch(/bun install --frozen-lockfile/);
 });
