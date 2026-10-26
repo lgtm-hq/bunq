@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import dns from "node:dns";
 import { cp, mkdtemp, mkdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -24,6 +25,33 @@ const cases = [
   ["dns-promise-resolver", 'await new dns.promises.Resolver().resolve6("network.invalid")'],
   ["assertionless", ""],
 ];
+// Exercise each TLSA entry point only on runtimes that actually provide it.
+// Broken guards can reach only loopback, never the host's configured DNS server.
+for (const [name, target, api, code] of [
+  ["dns-tlsa", dns, "dns.resolveTlsa", 'dns.resolveTlsa("network.invalid", () => {})'],
+  [
+    "dns-promise-tlsa",
+    dns.promises,
+    "dns.promises.resolveTlsa",
+    'await dns.promises.resolveTlsa("network.invalid")',
+  ],
+  [
+    "dns-resolver-tlsa",
+    dns.Resolver.prototype,
+    "Resolver.resolveTlsa",
+    'const r = new dns.Resolver({ timeout: 20, tries: 1 }); r.setServers(["127.0.0.1:9"]); r.resolveTlsa("network.invalid", () => {})',
+  ],
+  [
+    "dns-promise-resolver-tlsa",
+    dns.promises.Resolver.prototype,
+    "PromiseResolver.resolveTlsa",
+    'const r = new dns.promises.Resolver({ timeout: 20, tries: 1 }); r.setServers(["127.0.0.1:9"]); await r.resolveTlsa("network.invalid")',
+  ],
+]) {
+  if (typeof Object.getOwnPropertyDescriptor(target, "resolveTlsa")?.value === "function") {
+    cases.push([name, code, api]);
+  }
+}
 try {
   // Copy current source, including uncommitted tests, without ignored secrets,
   // dependencies or reports. Probe mutations never enter the working checkout.
@@ -49,6 +77,16 @@ try {
     "dir",
   );
   await mkdir(temporary);
+  await writeFile(
+    `${temporary}/loopback-setup.ts`,
+    `
+import dns from "node:dns";
+// setServers rebinds Node's default resolver functions, so configure before guards.
+dns.setServers(["127.0.0.1:9"]);
+dns.promises.setServers(["127.0.0.1:9"]);
+await import("../tests/setup.ts");
+`,
+  );
   await writeFile(
     `${temporary}/negative.test.ts`,
     `
@@ -77,6 +115,7 @@ ${cases
     thresholds = true,
     expectedStatus = 1,
     restoreMocks,
+    loopbackDns = false,
   }) {
     // Missing reports must fail; a previous probe is never evidence for this run.
     await rm(`${temporary}/results.json`, { force: true });
@@ -89,6 +128,7 @@ export default {
   ...base,
   test: { ...base.test, include: ${JSON.stringify(include)},
     ...${JSON.stringify(restoreMocks === undefined ? {} : { restoreMocks })},
+    ...${JSON.stringify(loopbackDns ? { setupFiles: [`${temporary}/loopback-setup.ts`] } : {})},
     coverage: { ...base.test.coverage, enabled: ${coverage},
       ${thresholds ? "" : "thresholds: {},"}
       reportsDirectory: ${JSON.stringify(`${temporary}/coverage`)} },
@@ -112,16 +152,22 @@ export default {
     assert.equal(result.status, expectedStatus, result.stdout + result.stderr);
     return result;
   }
-  const negative = await run({ include: [`${temporary}/negative.test.ts`] });
+  const negative = await run({ include: [`${temporary}/negative.test.ts`], loopbackDns: true });
   const report = JSON.parse(await readFile(`${temporary}/results.json`, "utf8"));
   const assertions = report.testResults.flatMap((suite) => suite.assertionResults);
-  for (const [name] of cases) {
+  for (const [name, , api] of cases) {
     const test = assertions.find((entry) => entry.title === name);
     assert.equal(test?.status, "failed", `${name} incorrectly passed`);
     assert.match(
       test.failureMessages.join("\n"),
       name === "assertionless" ? /assertion/i : /Unexpected network attempts/,
     );
+    if (api)
+      assert(
+        test.failureMessages.some((message) =>
+          message.includes(`Unexpected network attempts: ${api}`),
+        ),
+      );
   }
   assert.doesNotMatch(negative.stderr, /ENOTFOUND|ECONNREFUSED/);
   await writeFile(
@@ -157,10 +203,18 @@ it("http survives cleanup", async () => {
     const restored = JSON.parse(await readFile(`${temporary}/results.json`, "utf8"));
     assert.equal(restored.numPassedTests, 1);
     const results = restored.testResults.flatMap((suite) => suite.assertionResults);
-    for (const title of ["fetch survives restore", "http survives cleanup"]) {
+    for (const [title, api] of [
+      ["fetch survives restore", "fetch"],
+      ["http survives cleanup", "http.get"],
+    ]) {
       const result = results.find((entry) => entry.title === title);
       assert.equal(result?.status, "failed");
       assert.match(result.failureMessages.join("\n"), /Unexpected network attempts/);
+      assert(
+        result.failureMessages.some((message) =>
+          message.includes(`Unexpected network attempts: ${api}`),
+        ),
+      );
     }
   }
   await writeFile(

@@ -38,7 +38,8 @@ fixtures to claim those future cases pass.
 ## Isolation and adapters
 
 `tests/setup.ts` blocks real fetch, HTTP(S), HTTP/2, socket, TLS, UDP and common
-DNS calls before importing test modules. Each blocked attempt is recorded;
+DNS calls before importing test modules, including every `resolveTlsa` variant
+available on the running Node release. Each blocked attempt is recorded;
 test and suite teardown fail even when code catches the immediate error. Stack
 ordering makes the setup's final hook run after test-file cleanup. This is an
 in-process guard, not an operating-system sandbox for child processes.
@@ -71,6 +72,8 @@ The coverage probe requires all suites to pass and runs a successful control
 with only thresholds disabled, so unrelated hook failures cannot satisfy it.
 Additional probes verify caught fetch/HTTP attempts after `restoreAllMocks`,
 with automatic `restoreMocks` enabled, and rejection of guard replacement.
+TLSA probes cover callback and promise APIs, including both Resolver classes,
+on releases that provide them; older Node releases retain their existing API.
 
 Current tests cover runtime lower bounds, unsupported release lines, malformed
 versions, CLI argument rejection, executable toolchain mismatch and actionable

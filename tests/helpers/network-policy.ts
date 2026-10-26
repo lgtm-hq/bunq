@@ -61,14 +61,26 @@ export function installNetworkPolicy(): { assertNoAttempts: () => void } {
     "resolvePtr",
     "resolveSoa",
     "resolveSrv",
+    "resolveTlsa",
     "resolveTxt",
     "reverse",
   ] as const;
   for (const method of resolverMethods) {
-    block(dns, method, `dns.${method}`);
-    block(dns.promises, method, `dns.promises.${method}`);
-    block(dns.Resolver.prototype, method, `Resolver.${method}`);
-    block(dns.promises.Resolver.prototype, method, `PromiseResolver.${method}`);
+    for (const [target, prefix] of [
+      [dns, "dns"],
+      [dns.promises, "dns.promises"],
+      [dns.Resolver.prototype, "Resolver"],
+      [dns.promises.Resolver.prototype, "PromiseResolver"],
+    ] as const) {
+      // TLSA resolution is absent on older supported Node releases.
+      if (
+        method === "resolveTlsa" &&
+        typeof Object.getOwnPropertyDescriptor(target, method)?.value !== "function"
+      ) {
+        continue;
+      }
+      block(target, method, `${prefix}.${method}`);
+    }
   }
   syncBuiltinESMExports();
   return {
