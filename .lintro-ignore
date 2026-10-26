@@ -1,0 +1,4 @@
+# Generated quality reports are not project source.
+.lintro/*
+# The reusable workflow checks out its own pinned tooling here.
+.lgtm-ci-tooling/

@@ -9,8 +9,10 @@ boundaries, not evidence of an implemented or sandbox-verified system.
   per-profile session ownership, Node crypto and exact decimal money values.
 - Raycast uses a pinned published client through native adapters. MCP depends on
   that same client. Consumer compatibility is proved before migration.
-- Hermes launches a stdio bridge to a separate OS user's service over a Unix
-  socket. Credential, service and policy ownership must resist agent shell access.
+- The agent host launches a stdio bridge to a separate OS user's service over a
+  Unix
+  socket. Credential, service and policy ownership must resist agent shell
+  access.
 - Verified reads first. Native-app-approved drafts follow sandbox proof.
   Direct execution requires a later independent approval boundary.
 - Durable journals and reconciliation for unknown write outcomes; duplicate

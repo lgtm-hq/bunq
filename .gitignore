@@ -1,2 +1,3 @@
-# Generated local lintro reports and caches.
+# Generated quality reports and reusable-workflow tooling.
 .lintro/
+.lgtm-ci-tooling/

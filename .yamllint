@@ -1,0 +1,7 @@
+---
+extends: default
+
+rules:
+  # Prettier normalises trailing YAML comments to one space.
+  comments:
+    min-spaces-from-content: 1
