@@ -40,7 +40,13 @@ bun run verify:packages
 `bun run format` and `bun run lint` use uv's locked mode.
 Do not pass a tool filter: the full registry stays enabled. Native tool
 configuration controls the relevant file types; unrelated languages have no
-matching source. Commitlint uses the Conventional Commits preset.
+matching source. Commitlint uses the Conventional Commits preset. Oxlint
+rejects explicit `any`, non-const type assertions, non-null assertions and
+TypeScript ignore directives. Expected-error directives require a description.
+ESLint disable directives are rejected and cannot suppress Oxlint diagnostics.
+Unused Oxlint directives are errors. Any necessary named Oxlint exception
+requires a narrow, explicitly justified code review. State-model semantics, including
+appropriate discriminated unions, also remain a review responsibility.
 
 TypeScript is strict, including unknown catch values and explicit type-only
 imports. The root `tsconfig.json` checks every package source file without
@@ -56,8 +62,9 @@ specific justification.
 ## Formatting and generated files
 
 The generator owns package metadata and its generated TypeScript constants.
-It records every output in `.prettierignore`; both Prettier and oxfmt respect
-that file. Generated paths remain visible to type and security checks. Edit
+It records every output as a root-anchored path in `.prettierignore`; both
+Prettier and oxfmt respect that file. Generated paths remain visible to type
+and security checks. Edit
 their canonical inputs and run `bun run generate` instead of formatting them.
 The CI script checks tracked and untracked source drift after generation and
 after all build, test and package steps.
@@ -90,5 +97,11 @@ containing a deliberate TypeScript assignment error must still fail both
 fail the full check. Finally, run formatting twice and compare the source,
 generated metadata and lockfiles after each run. Never commit the probe errors
 or treat an unrelated tool failure as evidence that a probe was detected.
+Also verify that explicit `any`, double assertions, casts of `JSON.parse`,
+non-null assertions, TypeScript ignore comments, bare ESLint disables and
+unused Oxlint disables produce the intended lint diagnostics. Hand-written
+nested fixture manifests must still be formatted; only the generator's exact
+root-relative outputs are exempt. Structured reports are written under
+`.lintro/artifacts/json/` for checking the specific tool and diagnostic.
 
 [katex-advisory]: https://github.com/advisories/GHSA-238p-pmpm-9mq7

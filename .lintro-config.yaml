@@ -2,3 +2,4 @@
 # Keep the full registry enabled; irrelevant tools detect that no files apply.
 execution:
   auto_install_deps: false
+  artifacts: [json]
