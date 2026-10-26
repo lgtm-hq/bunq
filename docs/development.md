@@ -59,6 +59,14 @@ Bundling alone cannot establish correctness. Financial state models must use
 discriminated unions and narrow unknown input; suppressions and casts need
 specific justification.
 
+Repository-only declarations in `types/untrusted-json` make `JSON.parse`
+return `unknown`, including with a reviver, and `Body.json()` return
+`Promise<unknown>`. Both source checking and package builds inherit these
+types through the root type configuration. Validate the decoded value before
+assigning a domain type; a typed destination is not validation. These ambient
+declarations are development inputs and are not copied into published packages.
+They do not add runtime validation or replace the response-contract work in #32.
+
 ## Formatting and generated files
 
 The generator owns package metadata and its generated TypeScript constants.
