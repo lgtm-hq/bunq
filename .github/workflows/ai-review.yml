@@ -43,4 +43,8 @@ jobs:
       CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
     with:
       blocking: true
-      egress-policy: audit
+      egress-policy: block
+      allowed-endpoints-mode: append
+      allowed-endpoints: >-
+        results-receiver.actions.githubusercontent.com:443
+        *.blob.core.windows.net:443

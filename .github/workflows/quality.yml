@@ -23,4 +23,8 @@ jobs:
       contents: read
       packages: read
     with:
-      egress-policy: audit
+      egress-policy: block
+      allowed-endpoints-mode: append
+      allowed-endpoints: >-
+        results-receiver.actions.githubusercontent.com:443
+        *.blob.core.windows.net:443
