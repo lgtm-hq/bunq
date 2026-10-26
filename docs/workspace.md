@@ -32,8 +32,10 @@ The narrow Prettier override preserves JSON.stringify output in manifests.
 TypeScript is pinned to the same major as the existing Raycast extension.
 
 Install the Bun version named by `packageManager`, plus a Node release allowed
-by `engines.node`. The toolchain check rejects other Bun versions and npm-based
-workspace installation with an actionable command. Consumers need Node only.
+by `engines.node`. The toolchain hook rejects other Bun versions and package
+manager user agents with an actionable command. npm may reject `workspace:`
+dependencies before that hook runs; use Bun for workspace installation.
+Consumers need Node only.
 
 ```sh
 bun install --frozen-lockfile
@@ -52,7 +54,8 @@ and makes the CLI executable. No Bun API or runtime is embedded in the output.
 Quality setup remains #13. Until its uv project exists, use the installed
 lintro with `uv run --no-project lintro fmt` and
 `uv run --no-project lintro chk`, without filters. The workspace boundary tests
-use Node's test runner; full behavioural coverage onboarding remains #14.
+use Node's test runner and rebuild first to avoid stale output; full
+behavioural coverage onboarding remains #14.
 
 ## Packed consumer validation
 

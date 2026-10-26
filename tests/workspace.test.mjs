@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, it } from "node:test";
 import { assertSupportedNodeRuntime } from "../packages/client/dist/runtime.js";
 
@@ -31,7 +33,7 @@ describe("supported consumer runtime boundary", () => {
   }
 });
 
-it("rejects installing the workspace through npm", () => {
+it("rejects an npm user agent when the toolchain hook runs", () => {
   const result = spawnSync(process.execPath, ["scripts/check-toolchain.mjs"], {
     cwd: new URL("../", import.meta.url),
     encoding: "utf8",
@@ -41,12 +43,19 @@ it("rejects installing the workspace through npm", () => {
   assert.match(result.stderr, /bun install --frozen-lockfile/);
 });
 
-it("rejects a Bun version other than the canonical pin", () => {
-  const result = spawnSync(process.execPath, ["scripts/check-toolchain.mjs"], {
-    cwd: new URL("../", import.meta.url),
-    encoding: "utf8",
-    env: { ...process.env, npm_config_user_agent: "bun/0.0.0" },
-  });
-  assert.equal(result.status, 1);
-  assert.match(result.stderr, new RegExp(config.packageManager.replace(".", "\\.")));
+it("rejects a Bun executable reporting a version other than the canonical pin", async () => {
+  const temporary = await mkdtemp(join(tmpdir(), "bunq-toolchain-test-"));
+  try {
+    await writeFile(join(temporary, "bun"), "#!/bin/sh\nprintf '0.0.0\\n'\n", { mode: 0o755 });
+    const result = spawnSync(process.execPath, ["scripts/check-toolchain.mjs"], {
+      cwd: new URL("../", import.meta.url),
+      encoding: "utf8",
+      env: { ...process.env, PATH: `${temporary}:${process.env.PATH}` },
+    });
+    assert.equal(result.status, 1);
+    assert(result.stderr.includes(`This workspace requires ${config.packageManager}.`));
+    assert.match(result.stderr, /bun install --frozen-lockfile/);
+  } finally {
+    await rm(temporary, { recursive: true, force: true });
+  }
 });
