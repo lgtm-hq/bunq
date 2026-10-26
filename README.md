@@ -6,10 +6,11 @@ with bunq.
 
 ## Status
 
-Foundation and planning only. No client, MCP server or installable package is
-available yet. Repository bootstrap is not complete, and no production banking
-integration is enabled. [Bootstrap status](docs/repository-setup.md) records the
-initial CI gates and remaining setup. Track delivery in the
+Buildable client/MCP workspace scaffolding only. No banking client, MCP server
+or published package is available yet. Repository bootstrap is not complete,
+and no production banking integration is enabled.
+[Bootstrap status](docs/repository-setup.md) records the initial CI gates and
+remaining setup. Track delivery in the
 [programme epic][programme] and [bootstrap epic][bootstrap].
 
 ## Consumers and boundaries
@@ -31,12 +32,23 @@ captured contracts; parity with every bunq app feature is not promised.
 
 ## Development
 
-Start with [AGENTS.md](AGENTS.md), the [architecture index](docs/adr/README.md)
-and [provenance](docs/provenance.md). The intended toolchain is Bun for
-workspace dependencies, Node.js for published runtime compatibility, and
-uv-managed lintro for quality checks. Exact pins and executable commands land in
-[workspace setup][workspace] and [quality setup][quality]. Do not treat those
-planned checks as passing before they exist.
+Start with [AGENTS.md](AGENTS.md), the [workspace contract](docs/workspace.md),
+[architecture index](docs/adr/README.md) and [provenance](docs/provenance.md).
+Bun manages the workspace; packed artifacts run on supported Node releases.
+The root manifest owns exact version pins. Install its declared Bun version,
+then run:
+
+```sh
+bun install --frozen-lockfile
+bun run typecheck
+bun run build
+bun run test:workspace
+bun run verify:packages
+```
+
+The [workspace contract](docs/workspace.md) describes generation, ESM exports,
+packed-consumer validation and current CI scope. uv-managed lintro and full
+coverage onboarding remain in [quality setup][quality] and testing issue #14.
 
 Contributions follow the inherited [LGTM HQ guide][contributing] and
 [code of conduct][conduct]. Pull requests use the organisation's inherited
@@ -46,10 +58,8 @@ policies. See [LICENSE](LICENSE) for MIT terms and retained notices.
 
 [programme]: https://github.com/lgtm-hq/bunq/issues/1
 [bootstrap]: https://github.com/lgtm-hq/bunq/issues/2
-[workspace]: https://github.com/lgtm-hq/bunq/issues/11
 [quality]: https://github.com/lgtm-hq/bunq/issues/13
 [contributing]: https://github.com/lgtm-hq/.github/blob/main/CONTRIBUTING.md
 [conduct]: https://github.com/lgtm-hq/.github/blob/main/CODE_OF_CONDUCT.md
 [template]: https://github.com/lgtm-hq/.github/blob/main/.github/PULL_REQUEST_TEMPLATE.md
-
 [hermes]: https://github.com/NousResearch/hermes-agent

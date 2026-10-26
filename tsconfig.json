@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "verbatimModuleSyntax": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmitOnError": true,
+    "skipLibCheck": false,
+    "declaration": true,
+    "composite": true,
+    "types": ["node"]
+  },
+  "files": [],
+  "references": [{ "path": "packages/client" }, { "path": "packages/mcp" }]
+}

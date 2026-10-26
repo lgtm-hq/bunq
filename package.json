@@ -1,0 +1,36 @@
+{
+  "name": "bunq-workspace",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "packageManager": "bun@1.4.4",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "preinstall": "node scripts/check-toolchain.mjs",
+    "generate": "node scripts/generate.mjs",
+    "typecheck": "node scripts/workspace.mjs typecheck",
+    "build": "node scripts/workspace.mjs build",
+    "verify:packages": "node scripts/verify-packages.mjs",
+    "test:workspace": "node --test tests/workspace.test.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "typescript": "5.9.3"
+  },
+  "bunqWorkspace": {
+    "scope": "lgtm-hq",
+    "binary": "lgtm-bunq-mcp",
+    "nodeMinimums": [
+      "22.14.0",
+      "24.0.0",
+      "26.0.0"
+    ]
+  },
+  "engines": {
+    "node": "^22.14.0 || ^24.0.0 || ^26.0.0",
+    "bun": "1.4.4"
+  }
+}

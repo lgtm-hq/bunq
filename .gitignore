@@ -1,3 +1,9 @@
 # Generated quality reports and reusable-workflow tooling.
 .lintro/
 .lgtm-ci-tooling/
+
+# Workspace dependencies and generated build/pack output.
+node_modules/
+dist/
+*.tgz
+packages/*/LICENSE
