@@ -40,6 +40,8 @@ it("rejects an npm user agent when the toolchain hook runs", () => {
     env: { ...process.env, npm_config_user_agent: "npm/11.0.0" },
   });
   assert.equal(result.status, 1);
+  assert.match(result.stderr, /not npm\/11\.0\.0/);
+  assert.doesNotMatch(result.stderr, /This workspace requires/);
   assert.match(result.stderr, /bun install --frozen-lockfile/);
 });
 
