@@ -64,7 +64,9 @@ PKCE, device authorization or a refresh-token grant.
 
 Official evidence: [OAuth session][oauth-session] exchanges the access token
 for a session; [session documentation][sessions] describes recreating expired
-sessions.
+sessions. The [OAuth overview][oauth] explicitly describes storing the access
+token and reusing it for subsequent sessions. This establishes intended reuse,
+not specific expiry or revocation semantics; those still need contract evidence.
 
 Project implication: Store the long-lived credential separately from the
 session token. Session renewal must not silently create another
@@ -141,8 +143,7 @@ to #15, #16, #25 and #45, with provider/history decisions in #46.
 ## Proposed public OAuth custody
 
 The candidate broker would be operated by an accountable LGTM HQ maintainer,
-outside
-the extension and agent process. It owns the application secret, callback
+outside the extension and agent process. It owns the application secret, callback
 handler and, if adopted, the user token/session store and signed bunq requests.
 The extension receives a separate, bounded application session, never the
 broker's client secret. This creates an additional sensitive service; it is
@@ -151,19 +152,44 @@ not approved merely because the client library can be published.
 The proposed callback requirements are project recommendations, not claims
 about bunq's implementation:
 
-1. Generate unpredictable opaque state, bind it to the initiating authenticated
-   application session, account-link attempt and environment, and expire it.
-2. Register an exact HTTPS callback. Validate the expected origin/path and
+1. Open a broker entry endpoint from the extension. Require the browser's
+   authenticated application principal to match the initiating extension
+   session. Set an independent, unpredictable, short-lived, single-use browser
+   binding in a Secure, HttpOnly, SameSite=Lax cookie tied to that attempt.
+   A forwarded entry URL must not transfer ownership of an attempt.
+2. Generate unpredictable opaque state, bind it to that browser/extension pair,
+   account-link attempt and environment, and expire it. Register an exact HTTPS
+   callback. Validate the expected origin/path and
    environment; reject unexpected redirect destinations and return URLs.
    Native custom-scheme or loopback callbacks require explicit provider evidence.
-3. Reject missing, mismatched, expired or reused state before code exchange.
-   Consume the pending attempt once; do not put credentials or personal data in
-   state. Bind the resulting account to the initiator, never a callback user ID.
+3. Reject callbacks without the matching browser binding, application principal
+   or valid state, including expired/reused attempts, before code exchange.
+   Consume the attempt and binding once. Keep credentials and personal data out
+   of state; never select an application account from a callback user ID.
 4. Exchange the code server-side using the documented POST body and exact
    registered redirect URI. Redact codes/secrets/tokens from logs, telemetry,
    exception messages and URLs. Never put them in extension assets or argv.
-5. Verify account identity through captured contracts before committing a link.
-   Denied consent and uncertain exchanges leave no authenticated local profile.
+5. Keep the account link pending and unusable. Verify ownership against an
+   independently established expected identity or provider-supported binding.
+   Only then show the canonical bunq user/account identifier and display name
+   in the initiating extension session and require confirmation there. Pending
+   tokens and banking data stay inaccessible to tools and other app sessions.
+   A display name or an attacker's confirmation is not ownership proof.
+6. Denied consent, uncertain exchange, a browser mismatch or missing ownership
+   evidence leaves no usable profile. An unknown bank identity for a new public
+   user cannot pass a generic "verify identity" check; onboarding stays blocked
+   until the provider-supported ownership protocol and its tests are established.
+
+The browser binding rejects a forwarded authorize URL completed in a different
+browser. A forwarded QR image approved on a phone may instead complete in the
+attacker's original browser. Neither state, its cookie nor extension confirmation
+alone proves who consented. Public linking remains disabled until #12/#16/#18
+resolve that cross-device threat and demonstrate independent ownership binding.
+
+The OAuth overview includes an example with the secret in a query string, while
+the dedicated [code-handling page][exchange] uses POST body fields. This design
+deliberately follows the body form and rejects secrets in URLs to limit logging
+exposure; the documentation conflict does not permit a query-string fallback.
 
 Selecting this custodial backend versus a provider-approved native flow is a
 maintainer decision after bunq answers the questions below. There is no
@@ -233,6 +259,14 @@ provider/contract gate. This research changes no IP policy.
 No bunq support reply has been obtained or implied. The maintainer owns sending
 the following questions through an authorised support channel and recording a
 dated, redacted answer. Keep #12 open until the answers are dispositioned.
+
+How does bunq bind QR/phone consent to the intended application user and browser
+for account linking? Which supported flow prevents a forwarded authorize URL,
+broker-entry link or QR image from attaching a victim's bank to an attacker's
+application session, including a new user without a previously known bank ID?
+
+Gate and owner: #12/#16/#18 cross-device consent and ownership proof; maintainer
+obtains guidance and the auth implementer demonstrates adversarial sandbox cases.
 
 Does a public SDK with no hosted service differ from a public application? Is
 a sole owner's privately operated automation instance using that SDK permitted

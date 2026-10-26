@@ -32,10 +32,12 @@ capabilities. This proposal does not establish that isolation yet.
 For a public application, require OAuth. Keep public onboarding disabled until
 bunq confirms the flow, eligibility, scopes and lifecycle. The candidate
 confidential backend would require a named maintainer operator and retain
-application
-secrets and, in the custodial option, user tokens/session state server-side.
-It must validate state/redirects and bind each account link to its initiator as
-specified in the authentication guide. Adoption requires an explicit custody
+application secrets and, in the custodial option, user tokens/session state
+server-side. It must bind the browser and extension principal, validate
+state/redirects, and keep a link unusable until extension confirmation and
+independent ownership proof pass as specified in the authentication guide.
+Forwarded QR consent is a separate unresolved threat; a cookie alone cannot
+resolve it. Adoption requires an explicit custody
 and operations decision; no such backend has been deployed or approved here.
 
 If bunq confirms a supported native flow, review it as an alternative rather
