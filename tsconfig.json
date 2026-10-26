@@ -14,14 +14,19 @@
     "declaration": false,
     "composite": false,
     "types": [
-      "node"
+      "node",
+      "untrusted-json"
     ],
     "noEmit": true,
     "paths": {
       "@lgtm-hq/bunq-client": [
         "./packages/client/src/runtime.ts"
       ]
-    }
+    },
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
+    ]
   },
   "include": [
     "packages/*/src/**/*.ts",

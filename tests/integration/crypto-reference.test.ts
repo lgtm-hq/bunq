@@ -5,9 +5,21 @@ import { readFile } from "node:fs/promises";
 
 // This verifies public test material against Node's real RSA/SHA-256 oracle.
 // It does not verify an unimplemented SDK signing or response-verification API.
-const vector: { message: string; publicKeyDerHex: string; signatureHex: string } = JSON.parse(
+const vector = JSON.parse(
   await readFile(new URL("../fixtures/rsa-sha256.json", import.meta.url), "utf8"),
 );
+if (
+  typeof vector !== "object" ||
+  vector === null ||
+  !("message" in vector) ||
+  typeof vector.message !== "string" ||
+  !("publicKeyDerHex" in vector) ||
+  typeof vector.publicKeyDerHex !== "string" ||
+  !("signatureHex" in vector) ||
+  typeof vector.signatureHex !== "string"
+) {
+  throw new Error("Crypto fixture must contain message, public key and signature strings.");
+}
 const publicKey = createPublicKey({
   key: Buffer.from(vector.publicKeyDerHex, "hex"),
   format: "der",

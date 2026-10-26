@@ -61,8 +61,8 @@ Merge only with all required work successful at the current head, all actionable
 review threads resolved and all applicable approval requirements satisfied.
 Use a pinned-head squash merge or the required merge queue; keep automerge off
 while triaging. Do not bypass protections or manufacture green checks. After
-merge,
-verify the exact main commit's push checks before proceeding to another merge.
+merge, verify the exact main commit's push checks before proceeding to another
+merge.
 If bootstrap checks are absent, keep the PR open and report the unmet gate.
 
 ## Banking constraints

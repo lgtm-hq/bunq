@@ -5,6 +5,16 @@ import { join } from "node:path";
 import { expect, it } from "vitest";
 
 const config = JSON.parse(await readFile(new URL("../../package.json", import.meta.url), "utf8"));
+if (
+  typeof config !== "object" ||
+  config === null ||
+  !("packageManager" in config) ||
+  typeof config.packageManager !== "string" ||
+  !config.packageManager.startsWith("bun@")
+) {
+  throw new Error("Workspace fixture must declare its Bun package manager.");
+}
+const packageManager = config.packageManager;
 
 async function runHook({ bunVersion, userAgent }: { bunVersion: string; userAgent: string }) {
   const temporary = await mkdtemp(join(tmpdir(), "bunq-toolchain-test-"));
@@ -31,7 +41,7 @@ async function runHook({ bunVersion, userAgent }: { bunVersion: string; userAgen
 
 it("rejects an npm user agent when the toolchain hook runs", async () => {
   const result = await runHook({
-    bunVersion: config.packageManager.slice("bun@".length),
+    bunVersion: packageManager.slice("bun@".length),
     userAgent: "npm/11.0.0",
   });
   expect(result.status).toBe(1);
@@ -43,6 +53,6 @@ it("rejects an npm user agent when the toolchain hook runs", async () => {
 it("rejects a Bun executable reporting a version other than the canonical pin", async () => {
   const result = await runHook({ bunVersion: "0.0.0", userAgent: "bun/0.0.0" });
   expect(result.status).toBe(1);
-  expect(result.stderr).toContain(`This workspace requires ${config.packageManager}.`);
+  expect(result.stderr).toContain(`This workspace requires ${packageManager}.`);
   expect(result.stderr).toMatch(/bun install --frozen-lockfile/);
 });

@@ -51,8 +51,8 @@ bun run verify:packages
 `typecheck` checks all workspace source without emitting or requiring built
 declarations. `build` cleans ignored `dist` directories, checks project
 references in dependency order, emits JavaScript and declarations, copies the
-root MIT licence,
-and makes the CLI executable. No Bun API or runtime is embedded in the output.
+root MIT licence and makes the CLI executable. No Bun API or runtime is embedded
+in the output.
 
 The [quality guide](development.md) documents locked uv-managed lintro, native
 tool setup and the full formatting/check commands. The [testing guide](testing.md)
