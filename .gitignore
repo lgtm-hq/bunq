@@ -7,3 +7,6 @@ node_modules/
 dist/
 *.tgz
 packages/*/LICENSE
+
+# uv-managed development tools are not shipped with the Node packages.
+.venv/

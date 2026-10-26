@@ -48,7 +48,8 @@ bun run verify:packages
 
 The [workspace contract](docs/workspace.md) describes generation, ESM exports,
 packed-consumer validation and current CI scope. uv-managed lintro and full
-coverage onboarding remain in [quality setup][quality] and testing issue #14.
+quality commands are in the [development guide](docs/development.md); full
+coverage onboarding remains in testing issue #14.
 
 Contributions follow the inherited [LGTM HQ guide][contributing] and
 [code of conduct][conduct]. Pull requests use the organisation's inherited
@@ -58,7 +59,6 @@ policies. See [LICENSE](LICENSE) for MIT terms and retained notices.
 
 [programme]: https://github.com/lgtm-hq/bunq/issues/1
 [bootstrap]: https://github.com/lgtm-hq/bunq/issues/2
-[quality]: https://github.com/lgtm-hq/bunq/issues/13
 [contributing]: https://github.com/lgtm-hq/.github/blob/main/CONTRIBUTING.md
 [conduct]: https://github.com/lgtm-hq/.github/blob/main/CODE_OF_CONDUCT.md
 [template]: https://github.com/lgtm-hq/.github/blob/main/.github/PULL_REQUEST_TEMPLATE.md

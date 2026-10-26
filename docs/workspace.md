@@ -28,8 +28,10 @@ The root `package.json` owns the package version, Bun pin and supported Node
 minimums. `bun run generate` derives `.bun-version`, workspace manifests,
 consumer runtime requirements and CLI version metadata. Generated files are
 committed; edit their source values and regenerate instead of changing copies.
-The narrow Prettier override preserves JSON.stringify output in manifests.
-TypeScript is pinned to the same major as the existing Raycast extension.
+The generator also derives `.prettierignore` from the outputs it writes, so
+formatters leave generated metadata unchanged. The workspace compiler is
+pinned separately from downstream consumers; packed declarations must remain
+compatible with their supported toolchains.
 
 Install the Bun version named by `packageManager`, plus a Node release allowed
 by `engines.node`. The toolchain hook rejects other Bun versions and package
@@ -46,15 +48,15 @@ bun run test:workspace
 bun run verify:packages
 ```
 
-`typecheck` runs TypeScript project-reference checking in dependency order and
-emits into ignored `dist` directories. `build` first cleans those directories,
-checks and emits plain JavaScript and declarations, copies the root MIT licence,
-and makes the CLI executable. No Bun API or runtime is embedded in the output.
+`typecheck` checks all workspace source without emitting or requiring built
+declarations. `build` cleans ignored `dist` directories, checks project
+references in dependency order, emits JavaScript and declarations, copies the
+root MIT licence and makes the CLI executable. No Bun API or runtime is embedded
+in the output.
 
-Quality setup remains #13. Until its uv project exists, use the installed
-lintro with `uv run --no-project lintro fmt` and
-`uv run --no-project lintro chk`, without filters. The workspace boundary tests
-use Node's test runner and rebuild first to avoid stale output; full
+The [quality guide](development.md) documents locked uv-managed lintro, native
+tool setup and the full formatting/check commands. The workspace boundary
+tests use Node's test runner and rebuild first to avoid stale output; full
 behavioural coverage onboarding remains #14.
 
 ## Packed consumer validation

@@ -4,16 +4,31 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "strict": true,
+    "useUnknownInCatchVariables": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
     "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true,
     "noEmitOnError": true,
     "skipLibCheck": false,
-    "declaration": true,
-    "composite": true,
-    "types": ["node"]
+    "declaration": false,
+    "composite": false,
+    "types": [
+      "node",
+      "untrusted-json"
+    ],
+    "noEmit": true,
+    "paths": {
+      "@lgtm-hq/bunq-client": [
+        "./packages/client/src/runtime.ts"
+      ]
+    },
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
+    ]
   },
-  "files": [],
-  "references": [{ "path": "packages/client" }, { "path": "packages/mcp" }]
+  "include": [
+    "packages/*/src/**/*.ts"
+  ]
 }

@@ -17,8 +17,8 @@ onboarding.
 All reusable workflows use the released lgtm-ci v0.78.0 commit, resolved from
 the annotated release tag. No deprecated `tooling-ref` override is needed.
 
-- `quality.yml` runs full lintro using the reusable's pinned container on PRs,
-  main pushes and merge groups. There is no tool filter or bank credential.
+- `quality.yml` runs full lintro using the caller's matching digest-pinned image
+  on PRs, main pushes and merge groups. There is no tool filter or bank credential.
 - `ai-review.yml` runs blocking lintro review on same-repository PRs, with
   explicit review/provider secret forwarding and read-only GitHub token
   permissions. Fork PRs cannot access those secrets. Repository review variables
@@ -61,13 +61,14 @@ head checks there. No fork code receives review credentials or a write token.
 ## Outstanding gates
 
 The [workspace contract](workspace.md) defines package pins, builds and packed
-consumer CI. Full local lintro setup (#13), behavioural tests and coverage
-(#14), complete CI/runtime checks (#17), layered security (#21),
-review-app/contributor onboarding (#22), live protections (#26) and the final
-bootstrap acceptance (#33) remain separate work. The baseline does not claim
-these capabilities are complete. The operating agreement follows the org
-review policy and adds independent Sol and Opus reviews. Organisation-level
-ruleset enforcement is still pending #26; the repo-scoped baseline is active.
+consumer CI. The [quality guide](development.md) defines locked local checks.
+Behavioural coverage (#14), complete CI/runtime checks (#17) and layered
+security (#21) remain separate work, alongside review-app/contributor
+onboarding (#22), live protections (#26) and final bootstrap acceptance (#33).
+The baseline does not claim these capabilities are complete. The operating
+agreement follows the org review policy and adds independent Sol and Opus
+reviews. Organisation-level ruleset enforcement is still pending #26; the
+repo-scoped baseline is active.
 
 A repository-scoped `bootstrap-main` ruleset now protects the default branch
 with no bypass actors: PR-only squash merges, resolved threads, signatures,
@@ -79,14 +80,14 @@ protection in #26.
 
 ## Local foundation validation
 
-Until the uv project is defined, use the installed lintro with
-`uv run --no-project lintro fmt` and `uv run --no-project lintro chk`. Run both
-without tool filters. `.lintro-ignore` excludes only generated reports and the
-reusable's separate pinned tooling checkout; project source remains in scope.
-The local tool version is validation evidence, not a committed workspace pin.
-The later workspace slice adds the build and boundary checks documented in
-[the workspace contract](workspace.md). The original foundation had no
-application test/build target; no skipped runner is evidence of a passing suite.
+Follow [the quality guide](development.md): run `uv sync --locked`, then
+`uv run lintro fmt` and `uv run lintro chk` without tool filters. The uv project
+and lockfile now define the local Lintro environment. `.lintro-ignore` excludes
+only generated reports and the reusable's separate pinned tooling checkout;
+project source remains in scope. Run the build and boundary checks documented
+in [the workspace contract](workspace.md) as well. The original foundation had
+no application test/build target; no skipped runner is evidence of a passing
+suite.
 
 [bootstrap]: https://github.com/lgtm-hq/bunq/issues/2
 [onboarding]: https://github.com/lgtm-hq/lgtm-ci/blob/main/docs/onboarding.md
