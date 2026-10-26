@@ -177,7 +177,9 @@ Sole-owner key profile: Recreate the session using the existing approved
 registration and credential; serialize renewal under #28.
 
 Proposed public OAuth profile: Recreate the session from the existing OAuth
-token; do not invent a refresh grant or silently repeat user consent.
+token only if its continued validity is established by provider guidance and
+contract evidence. Otherwise fail closed and require a fresh authorised
+consent flow. Do not invent a refresh grant or silently repeat consent.
 
 ### Long-lived credential revoked/invalid
 

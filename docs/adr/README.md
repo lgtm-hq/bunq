@@ -32,8 +32,9 @@ and public OAuth gates. It remains proposed while the
 [authentication evidence and provider questions](../authentication.md) are open.
 
 Create numbered ADRs under this directory with context, decision, alternatives,
-consequences, evidence and status. Link each accepted or superseded ADR here. Do
-not store credentials or private deployment details in an ADR.
+consequences, evidence and status. Link each proposed, accepted or superseded
+ADR here with its status. Do not store credentials or private deployment
+details in an ADR.
 
 [programme]: https://github.com/lgtm-hq/bunq/issues/1
 [adr]: https://github.com/lgtm-hq/bunq/issues/16
