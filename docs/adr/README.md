@@ -27,9 +27,14 @@ an [open gate][auth], including the distributed Raycast consumer. IP policy,
 response-signature presence and draft approval behaviour require evidence; no
 undocumented OAuth/PKCE support is assumed.
 
+[ADR 0001](0001-authentication.md) proposes separate publication, personal-profile
+and public OAuth gates. It remains proposed while the
+[authentication evidence and provider questions](../authentication.md) are open.
+
 Create numbered ADRs under this directory with context, decision, alternatives,
-consequences, evidence and status. Link each accepted or superseded ADR here. Do
-not store credentials or private deployment details in an ADR.
+consequences, evidence and status. Link each proposed, accepted or superseded
+ADR here with its status. Do not store credentials or private deployment
+details in an ADR.
 
 [programme]: https://github.com/lgtm-hq/bunq/issues/1
 [adr]: https://github.com/lgtm-hq/bunq/issues/16
