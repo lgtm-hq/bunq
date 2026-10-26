@@ -14,9 +14,10 @@ commit SHAs when onboarding CI; do not copy stale example pins.
 Bun manages the TypeScript workspace; packed packages run on the Node releases
 in the root manifest. Read [the workspace contract](docs/workspace.md) for exact
 pins and generated artifacts. Run `bun install --frozen-lockfile`,
-`bun run typecheck`, `bun run build`, `bun run test:workspace` and
-`bun run verify:packages`. Typechecking checks both source packages without
-emitting; builds separately check project references and emit declarations.
+`bun run typecheck`, `bun run build`, `bun run test:workspace`,
+`bun run verify:test-gates` and `bun run verify:packages`. Typechecking checks
+both source packages without emitting; builds separately check project
+references and emit declarations.
 Regenerate derived metadata with `bun run generate` and commit the result.
 
 uv manages the locked lintro environment. Run `uv sync --locked`, then
@@ -24,8 +25,9 @@ uv manages the locked lintro environment. Run `uv sync --locked`, then
 `bun run lint` use the same commands with locked dependency resolution.
 Read [the quality guide](docs/development.md) for setup and generated files.
 Run full checks without tool filters. The Workspace CI matrix checks real
-package consumers, but full behavioural coverage (#14) and CI onboarding
-(#17) remain open. Never invent a successful missing check.
+package consumers and gated Vitest coverage. Read [the testing guide](docs/testing.md)
+for network isolation and failure probes. Banking fixture proofs (#14) and
+CI onboarding (#17) remain open. Never invent a successful missing check.
 
 ## Identity routing
 

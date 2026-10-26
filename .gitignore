@@ -10,3 +10,6 @@ packages/*/LICENSE
 
 # uv-managed development tools are not shipped with the Node packages.
 .venv/
+
+# V8 behavioural coverage reports.
+coverage/

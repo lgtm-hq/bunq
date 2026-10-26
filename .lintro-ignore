@@ -2,3 +2,5 @@
 .lintro/*
 # The reusable workflow checks out its own pinned tooling here.
 .lgtm-ci-tooling/
+# Generated V8 coverage reports contain third-party reporter code, not source.
+coverage/
