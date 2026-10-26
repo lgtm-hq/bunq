@@ -1,8 +1,7 @@
 # Repository bootstrap status
 
 The foundation adds a documentation/workflow quality baseline so the first PR
-can be reviewed through CI. It does not complete the [bootstrap epic][bootstrap]
-.
+can be reviewed through CI. It does not complete the [bootstrap epic][bootstrap].
 
 ## Initial review base
 
@@ -27,11 +26,11 @@ the annotated release tag. No deprecated `tooling-ref` override is needed.
   reviews remain separate requirements; a green CI review does not replace them.
 - `all-checks-gate.yml` is a separate workflow so it cannot exclude quality jobs
   from its own run. The intended aggregate context is
-  `gate / ✅ All Checks Passed` ; confirm actual contexts from real runs before
+  `gate / ✅ All Checks Passed`; confirm actual contexts from real runs before
   making them required. Skipped jobs do not prove the underlying work ran.
 
-Following [onboarding][onboarding] , the initial audit runs were Quality
-`40301431746` and AI Review `40301431779` . Their harden-runner logs showed
+Following [onboarding][onboarding], the initial audit runs were Quality
+`40301431746` and AI Review `40301431779`. Their harden-runner logs showed
 GitHub artifact uploads to `results-receiver.actions.githubusercontent.com` and
 rotating Azure blob storage. Both callers now use block mode and append only
 those artifact endpoints to the canonical presets. Other observed destinations
@@ -43,7 +42,11 @@ The first non-draft run must demonstrate a real, complete lintro review, not a
 missing-secret or draft skip. App access and inherited credentials must be
 verified from execution; their presence is not inferred from workflow YAML. The
 initial AI run authenticated the review App but inference failed with an OpenAI
-CLI 401, producing no review. It is not a successful review gate.
+CLI 401, producing no review. It is not a successful review gate. The repository
+now overrides the review variables to `anthropic`, `cli`, `claude-opus-5-5`,
+using the existing org CLI credential forwarding. Org defaults are unchanged.
+The next CI run must demonstrate actual authentication and complete review;
+configuration alone does not satisfy that gate.
 
 ## Outstanding gates
 
@@ -51,9 +54,9 @@ Workspace pins (#11), full local lintro/typecheck setup (#13), behavioural tests
 and coverage (#14), complete CI/runtime checks (#17), layered security (#21),
 review-app/contributor onboarding (#22), live protections (#26) and the final
 bootstrap acceptance (#33) remain separate work. The baseline does not claim
-these capabilities are complete. The organisation's live review policy and the
-additional independent-review contract apply before merge while protections are
-being onboarded.
+these capabilities are complete. The operating agreement follows the org
+review policy and adds independent Sol and Opus reviews. Organisation-level
+ruleset enforcement is still pending #26; the repo-scoped baseline is active.
 
 A repository-scoped `bootstrap-main` ruleset now protects the default branch
 with no bypass actors: PR-only squash merges, resolved threads, signatures,
@@ -66,7 +69,7 @@ protection in #26.
 ## Local foundation validation
 
 Until the uv project is defined, use the installed lintro with
-`uv run --no-project lintro fmt` and `uv run --no-project lintro chk` . Run both
+`uv run --no-project lintro fmt` and `uv run --no-project lintro chk`. Run both
 without tool filters. `.lintro-ignore` excludes only generated reports and the
 reusable's separate pinned tooling checkout; project source remains in scope.
 The local tool version is validation evidence, not a committed workspace pin.

@@ -10,7 +10,7 @@ Foundation and planning only. No client, MCP server or installable package is
 available yet. Repository bootstrap is not complete, and no production banking
 integration is enabled. [Bootstrap status](docs/repository-setup.md) records the
 initial CI gates and remaining setup. Track delivery in the
-[programme epic][programme] and [bootstrap epic][bootstrap] .
+[programme epic][programme] and [bootstrap epic][bootstrap].
 
 ## Consumers and boundaries
 
@@ -31,16 +31,16 @@ captured contracts; parity with every bunq app feature is not promised.
 
 ## Development
 
-Start with [AGENTS.md](AGENTS.md) , the [architecture index](docs/adr/README.md)
-and [provenance](docs/provenance.md) . The intended toolchain is Bun for
+Start with [AGENTS.md](AGENTS.md), the [architecture index](docs/adr/README.md)
+and [provenance](docs/provenance.md). The intended toolchain is Bun for
 workspace dependencies, Node.js for published runtime compatibility, and
 uv-managed lintro for quality checks. Exact pins and executable commands land in
-[workspace setup][workspace] and [quality setup][quality] . Do not treat those
+[workspace setup][workspace] and [quality setup][quality]. Do not treat those
 planned checks as passing before they exist.
 
 Contributions follow the inherited [LGTM HQ guide][contributing] and
-[code of conduct][conduct] . Pull requests use the organisation's inherited
-[template][template] . The [security policy](SECURITY.md) and
+[code of conduct][conduct]. Pull requests use the organisation's inherited
+[template][template]. The [security policy](SECURITY.md) and
 [support notes](SUPPORT.md) add banking-specific guidance to the organisation
 policies. See [LICENSE](LICENSE) for MIT terms and retained notices.
 

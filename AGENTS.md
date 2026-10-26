@@ -6,8 +6,8 @@ This repository owns the portable bunq client and MCP adapter. The Raycast
 extension remains a separate consumer repository. Private deployment details,
 credentials and banking data do not belong in public source or issues.
 
-Use the canonical [LGTM HQ contributing standards][contributing] ,
-[lgtm-ci onboarding][onboarding] and [workflow contract][workflows] . Reference
+Use the canonical [LGTM HQ contributing standards][contributing],
+[lgtm-ci onboarding][onboarding] and [workflow contract][workflows]. Reference
 these policies rather than copying them. Resolve current released workflow
 commit SHAs when onboarding CI; do not copy stale example pins.
 
@@ -16,18 +16,18 @@ declared Node.js runtimes. uv manages lintro. Workspace setup (#11), quality
 setup (#13), tests (#14) and full CI (#17) define exact versions and executable
 commands. The initial quality, AI-review and aggregate workflows cover
 documentation and workflow source only; see
-[bootstrap status](docs/repository-setup.md) . There is no build or test suite
+[bootstrap status](docs/repository-setup.md). There is no build or test suite
 yet. Never invent a successful missing-toolchain check.
 
-Once configured, the quality entry points are `uv run lintro fmt` ,
-`uv run lintro chk` and `uv run lintro tst` , plus the workspace's declared
+Once configured, the quality entry points are `uv run lintro fmt`,
+`uv run lintro chk` and `uv run lintro tst`, plus the workspace's declared
 strict typecheck, build and behavioural coverage gates. Run full lintro checks;
 report unavailable tools and skipped work explicitly.
 
 ## Identity routing
 
-Canonical origin is `https://github.com/lgtm-hq/bunq.git` . All agent Git and
-GitHub writes use `lgtm-ai` : `lgtm-ai git commit` , `lgtm-ai git push` and
+Canonical origin is `https://github.com/lgtm-hq/bunq.git`. All agent Git and
+GitHub writes use `lgtm-ai`: `lgtm-ai git commit`, `lgtm-ai git push` and
 `lgtm-ai gh` for issues, PRs, comments, reviews, releases and merges. Run
 `lgtm-ai doctor --quiet` before writes when readiness has not been established
 in the session. Keep read-only `git` and `gh` commands unchanged. If App
@@ -53,7 +53,8 @@ Keep the PR draft until local validation and independent reviews are complete.
 Then obtain actual non-draft CI on a fresh signed head, recording which reviewed
 content it carries. Do not count draft-skipped review jobs as verification.
 Merge only with all required work successful at the current head, all actionable
-review threads resolved and required maintainer approval present. Use a
+review threads resolved and all applicable approval requirements satisfied. Use
+a
 pinned-head squash merge or the required merge queue; keep automerge off while
 triaging. Do not bypass protections or manufacture green checks. After merge,
 verify the exact main commit's push checks before proceeding to another merge.
@@ -67,8 +68,8 @@ provisioning, deployment, credential extraction or live data exposure to an LLM.
 Obtain explicit authorisation for those operations before performing them.
 
 Keep secrets out of Git, logs, tool output and review transcripts. Preserve
-upstream MIT notices when extracting code; see [provenance](docs/provenance.md)
-. Use captured, reproducibly redacted sandbox contracts rather than fixtures
+upstream MIT notices when extracting code; see [provenance](docs/provenance.md).
+Use captured, reproducibly redacted sandbox contracts rather than fixtures
 invented from stale types. Surface schema drift and partial failures explicitly;
 never turn malformed banking data into a successful empty result.
 

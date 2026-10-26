@@ -23,7 +23,7 @@ or sandbox-verified system.
   provider, history and retention decisions before live data reaches an agent.
 
 Authentication policy for personal API keys versus public applications/OAuth is
-an [open gate][auth] , including the distributed Raycast consumer. IP policy,
+an [open gate][auth], including the distributed Raycast consumer. IP policy,
 response-signature presence and draft approval behaviour require evidence; no
 undocumented OAuth/PKCE support is assumed.
 
