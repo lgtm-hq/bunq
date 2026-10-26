@@ -81,14 +81,14 @@ protection in #26.
 
 ## Local foundation validation
 
-Until the uv project is defined, use the installed lintro with
-`uv run --no-project lintro fmt` and `uv run --no-project lintro chk`. Run both
-without tool filters. `.lintro-ignore` excludes only generated reports and the
-reusable's separate pinned tooling checkout; project source remains in scope.
-The local tool version is validation evidence, not a committed workspace pin.
-The later workspace slice adds the build and boundary checks documented in
-[the workspace contract](workspace.md). The original foundation had no
-application test/build target; no skipped runner is evidence of a passing suite.
+Follow [the quality guide](development.md): run `uv sync --locked`, then
+`uv run lintro fmt` and `uv run lintro chk` without tool filters. The uv project
+and lockfile now define the local Lintro environment. `.lintro-ignore` excludes
+only generated reports and the reusable's separate pinned tooling checkout;
+project source remains in scope. Run the build and boundary checks documented
+in [the workspace contract](workspace.md) as well. The original foundation had
+no application test/build target; no skipped runner is evidence of a passing
+suite.
 
 [bootstrap]: https://github.com/lgtm-hq/bunq/issues/2
 [onboarding]: https://github.com/lgtm-hq/lgtm-ci/blob/main/docs/onboarding.md

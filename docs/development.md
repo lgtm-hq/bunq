@@ -5,7 +5,7 @@ Python and lintro are not dependencies of either published Node package.
 Use the runtime and Bun pins in `package.json` and a Python release allowed
 by `pyproject.toml`. `uv.lock` pins lintro and its Python dependencies;
 `bun.lock` pins the compiler, formatters and other Node development tools.
-The Quality caller pins the matching released Lintro container by digest;
+The Quality caller pins the released Lintro 0.173.1 container by digest;
 its release tag and source revision were verified against the registry.
 
 ## First checkout
