@@ -17,8 +17,8 @@ onboarding.
 All reusable workflows use the released lgtm-ci v0.78.0 commit, resolved from
 the annotated release tag. No deprecated `tooling-ref` override is needed.
 
-- `quality.yml` runs full lintro using the reusable's pinned container on PRs,
-  main pushes and merge groups. There is no tool filter or bank credential.
+- `quality.yml` runs full lintro using the caller's matching digest-pinned image
+  on PRs, main pushes and merge groups. There is no tool filter or bank credential.
 - `ai-review.yml` runs blocking lintro review on same-repository PRs, with
   explicit review/provider secret forwarding and read-only GitHub token
   permissions. Fork PRs cannot access those secrets. Repository review variables
@@ -62,13 +62,13 @@ head checks there. No fork code receives review credentials or a write token.
 
 The [workspace contract](workspace.md) defines package pins, builds and packed
 consumer CI. The [quality guide](development.md) defines locked local checks.
-Behavioural tests and coverage (#14), complete CI/runtime checks (#17), layered
-security (#21), review-app/contributor onboarding (#22), live protections (#26)
-and the final bootstrap acceptance (#33) remain separate work. The baseline
-does not claim these capabilities are complete. The operating agreement follows
-the org
-review policy and adds independent Sol and Opus reviews. Organisation-level
-ruleset enforcement is still pending #26; the repo-scoped baseline is active.
+Behavioural coverage (#14), complete CI/runtime checks (#17) and layered
+security (#21) remain separate work, alongside review-app/contributor
+onboarding (#22), live protections (#26) and final bootstrap acceptance (#33).
+The baseline does not claim these capabilities are complete. The operating
+agreement follows the org review policy and adds independent Sol and Opus
+reviews. Organisation-level ruleset enforcement is still pending #26; the
+repo-scoped baseline is active.
 
 A repository-scoped `bootstrap-main` ruleset now protects the default branch
 with no bypass actors: PR-only squash merges, resolved threads, signatures,
