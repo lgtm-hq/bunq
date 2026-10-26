@@ -34,6 +34,7 @@ uv run lintro fmt
 uv run lintro chk
 bun run typecheck
 bun run test:workspace
+bun run verify:test-gates
 bun run build
 bun run verify:packages
 ```

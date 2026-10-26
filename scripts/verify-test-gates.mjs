@@ -71,7 +71,13 @@ ${cases
   .join("\n")}
 `,
   );
-  async function run({ include, coverage = false, thresholds = true, expectedStatus = 1 }) {
+  async function run({
+    include,
+    coverage = false,
+    thresholds = true,
+    expectedStatus = 1,
+    restoreMocks,
+  }) {
     // Missing reports must fail; a previous probe is never evidence for this run.
     await rm(`${temporary}/results.json`, { force: true });
     await rm(`${temporary}/coverage`, { recursive: true, force: true });
@@ -82,6 +88,7 @@ import base from "../vitest.config.ts";
 export default {
   ...base,
   test: { ...base.test, include: ${JSON.stringify(include)},
+    ...${JSON.stringify(restoreMocks === undefined ? {} : { restoreMocks })},
     coverage: { ...base.test.coverage, enabled: ${coverage},
       ${thresholds ? "" : "thresholds: {},"}
       reportsDirectory: ${JSON.stringify(`${temporary}/coverage`)} },
@@ -117,6 +124,68 @@ export default {
     );
   }
   assert.doesNotMatch(negative.stderr, /ENOTFOUND|ECONNREFUSED/);
+  await writeFile(
+    `${temporary}/restore.test.ts`,
+    `
+import { afterEach, it, expect, vi } from "vitest";
+import http from "node:http";
+afterEach(() => vi.restoreAllMocks());
+it("owned spy control", () => {
+  const spy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+  console.warn("control");
+  expect(spy).toHaveBeenCalledWith("control");
+});
+it("fetch survives restore", async () => {
+  vi.restoreAllMocks();
+  try { await fetch("http://127.0.0.1:9"); } catch { /* The guard must record this. */ }
+  expect(1 + 1).toBe(2);
+});
+it("http survives cleanup", async () => {
+  try {
+    await new Promise((resolve, reject) => {
+      http.get("http://127.0.0.1:9", response => {
+        response.resume(); resolve(undefined);
+      }).on("error", reject);
+    });
+  } catch { /* Caught network errors cannot satisfy the probe. */ }
+  expect(1 + 1).toBe(2);
+});
+`,
+  );
+  for (const restoreMocks of [undefined, true]) {
+    await run({ include: [`${temporary}/restore.test.ts`], restoreMocks });
+    const restored = JSON.parse(await readFile(`${temporary}/results.json`, "utf8"));
+    assert.equal(restored.numPassedTests, 1);
+    const results = restored.testResults.flatMap((suite) => suite.assertionResults);
+    for (const title of ["fetch survives restore", "http survives cleanup"]) {
+      const result = results.find((entry) => entry.title === title);
+      assert.equal(result?.status, "failed");
+      assert.match(result.failureMessages.join("\n"), /Unexpected network attempts/);
+    }
+  }
+  await writeFile(
+    `${temporary}/tampered.test.ts`,
+    `
+import { it, expect } from "vitest";
+it("guard replacement is rejected", () => {
+  globalThis.fetch = async () => new Response("offline fake");
+  expect(1 + 1).toBe(2);
+});
+`,
+  );
+  await run({ include: [`${temporary}/tampered.test.ts`] });
+  const tampered = JSON.parse(await readFile(`${temporary}/results.json`, "utf8"));
+  assert(
+    tampered.testResults
+      .flatMap((suite) => suite.assertionResults)
+      .some(
+        (entry) =>
+          entry.status === "failed" &&
+          entry.failureMessages.some((message) =>
+            /Network guard was replaced: fetch/.test(message),
+          ),
+      ),
+  );
   await writeFile(
     `${temporary}/teardown.test.ts`,
     `

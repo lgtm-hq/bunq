@@ -44,14 +44,18 @@ ordering makes the setup's final hook run after test-file cleanup. This is an
 in-process guard, not an operating-system sandbox for child processes.
 Integration children are fixed local toolchain commands. Package smoke uses
 offline npm installation; CI's Linux runner adds network enforcement.
+Guards use direct worker-local replacements, so `vi.restoreAllMocks()` and
+Vitest's `restoreMocks` option cannot remove them. Teardown also checks that
+each guard remains installed; replacing a guard is a test failure.
 
 Inject adapters instead of restoring real network access. Use Vitest's typed
 `vi.fn<typeof fetch>()` with queued `Response` objects or rejected promises,
 preserving complete captured bodies and HTTP status/headers. Use a fresh `Map`
 behind the eventual store interface and Vitest fake timers for an injected
 clock. Introduce shared domain fakes when those interfaces exist rather than
-defining competing production contracts in test helpers. Restore only spies
-and timers owned by the test; keep the network guard active. Await all work.
+defining competing production contracts in test helpers. Restore test-owned
+spies and timers after each case; `restoreAllMocks` is safe for these guards.
+Inject fakes instead of replacing guard functions. Await all work.
 
 ## Failure gates and high-risk cases
 
@@ -65,6 +69,8 @@ data outside the repository; it cannot leave injected source in the working
 checkout. Every Workspace CI job runs these probes; child failures are expected.
 The coverage probe requires all suites to pass and runs a successful control
 with only thresholds disabled, so unrelated hook failures cannot satisfy it.
+Additional probes verify caught fetch/HTTP attempts after `restoreAllMocks`,
+with automatic `restoreMocks` enabled, and rejection of guard replacement.
 
 Current tests cover runtime lower bounds, unsupported release lines, malformed
 versions, CLI argument rejection, executable toolchain mismatch and actionable
