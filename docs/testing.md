@@ -60,6 +60,8 @@ their diagnostics. It proves swallowed network attempts, assertionless tests,
 focused tests, empty selections and an unimported shipped module below coverage
 thresholds fail. Temporary files are removed in `finally`. Every Workspace CI
 job runs these probes; their intentional child failures are expected.
+The coverage probe requires all suites to pass and runs a successful control
+with only thresholds disabled, so unrelated hook failures cannot satisfy it.
 
 Current tests cover runtime lower bounds, unsupported release lines, malformed
 versions, CLI argument rejection, executable toolchain mismatch and actionable

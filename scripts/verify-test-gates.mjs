@@ -43,7 +43,7 @@ ${cases
   .join("\n")}
 `,
   );
-  async function run({ include, coverage = false }) {
+  async function run({ include, coverage = false, thresholds = true, expectedStatus = 1 }) {
     await writeFile(
       `${temporary}/config.ts`,
       `
@@ -52,6 +52,7 @@ export default {
   ...base,
   test: { ...base.test, include: ${JSON.stringify(include)},
     coverage: { ...base.test.coverage, enabled: ${coverage},
+      ${thresholds ? "" : "thresholds: {},"}
       reportsDirectory: ${JSON.stringify(`${temporary}/coverage`)} },
   },
 };
@@ -70,7 +71,7 @@ export default {
       { cwd: root, encoding: "utf8", timeout: 60_000 },
     );
     if (result.error) throw result.error;
-    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.equal(result.status, expectedStatus, result.stdout + result.stderr);
     return result;
   }
   const negative = await run({ include: [`${temporary}/negative.test.ts`] });
@@ -127,10 +128,20 @@ afterAll(async () => {
   const coverage = JSON.parse(await readFile(`${temporary}/results.json`, "utf8"));
   assert.equal(coverage.numFailedTests, 0);
   assert(coverage.numPassedTests > 0);
+  for (const suite of coverage.testResults) {
+    assert.equal(suite.status, "passed", suite.message);
+  }
   const summary = JSON.parse(await readFile(`${temporary}/coverage/coverage-summary.json`, "utf8"));
   const missing = Object.entries(summary).find(([path]) => path.endsWith("/src/uncovered.ts"));
   assert(missing, "Unimported shipped source disappeared from coverage");
   assert.equal(missing[1].statements.pct, 0);
+  // The same files and coverage collection must pass when only thresholds change.
+  await run({
+    include: ["packages/*/test/**/*.test.ts", "tests/**/*.test.ts"],
+    coverage: true,
+    thresholds: false,
+    expectedStatus: 0,
+  });
   console.log(
     "Test gates rejected network attempts, assertionless/focused/empty tests and uncovered source.",
   );
