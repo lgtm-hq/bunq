@@ -39,7 +39,8 @@ fixtures to claim those future cases pass.
 
 `tests/setup.ts` blocks real fetch, HTTP(S), HTTP/2, socket, TLS, UDP and common
 DNS calls before importing test modules. Each blocked attempt is recorded;
-teardown fails even when tested code catches the immediate error. This is an
+test and suite teardown fail even when code catches the immediate error. Stack
+ordering makes the setup's final hook run after test-file cleanup. This is an
 in-process guard, not an operating-system sandbox for child processes.
 Integration children are fixed local toolchain commands. Package smoke uses
 offline npm installation; CI's Linux runner adds network enforcement.

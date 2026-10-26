@@ -8,6 +8,7 @@ export default defineConfig({
     setupFiles: ["./tests/setup.ts"],
     allowOnly: false,
     passWithNoTests: false,
+    sequence: { hooks: "stack" },
     expect: { requireAssertions: true },
     coverage: {
       provider: "v8",

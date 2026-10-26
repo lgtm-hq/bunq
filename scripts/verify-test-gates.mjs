@@ -85,6 +85,25 @@ export default {
     );
   }
   assert.doesNotMatch(negative.stderr, /ENOTFOUND|ECONNREFUSED/);
+  await writeFile(
+    `${temporary}/teardown.test.ts`,
+    `
+import { afterAll, it, expect } from "vitest";
+it("normal assertion before teardown", () => expect(2 + 2).toBe(4));
+afterAll(async () => {
+  try { await fetch("https://network.invalid"); }
+  catch { /* Swallowed suite-cleanup attempts must also fail the run. */ }
+});
+`,
+  );
+  await run({ include: [`${temporary}/teardown.test.ts`] });
+  const teardown = JSON.parse(await readFile(`${temporary}/results.json`, "utf8"));
+  assert.equal(teardown.numPassedTests, 1);
+  assert(
+    teardown.testResults.some(
+      (suite) => suite.status === "failed" && /Unexpected network attempts/.test(suite.message),
+    ),
+  );
   await run({ include: [`${temporary}/absent.test.ts`] });
   const empty = JSON.parse(await readFile(`${temporary}/results.json`, "utf8"));
   assert.equal(empty.numTotalTests, 0);
