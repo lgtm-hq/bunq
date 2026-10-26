@@ -21,9 +21,10 @@ the annotated release tag. No deprecated `tooling-ref` override is needed.
   main pushes and merge groups. There is no tool filter or bank credential.
 - `ai-review.yml` runs blocking lintro review on same-repository PRs, with
   explicit review/provider secret forwarding and read-only GitHub token
-  permissions. Fork PRs cannot access those secrets. Provider/model/transport
-  resolve through the organisation's Actions variables. Independent Sol and Opus
-  reviews remain separate requirements; a green CI review does not replace them.
+  permissions. Fork PRs cannot access those secrets. Repository review variables
+  override organisation defaults; the reusable resolves the effective values.
+  Independent Sol and Opus reviews remain separate requirements; a green CI
+  review does not replace them.
 - `all-checks-gate.yml` is a separate workflow so it cannot exclude quality jobs
   from its own run. The intended aggregate context is
   `gate / ✅ All Checks Passed`; confirm actual contexts from real runs before
@@ -33,10 +34,12 @@ Following [onboarding][onboarding], the initial audit runs were Quality
 `40301431746` and AI Review `40301431779`. Their harden-runner logs showed
 GitHub artifact uploads to `results-receiver.actions.githubusercontent.com` and
 rotating Azure blob storage. Both callers now use block mode and append only
-those artifact endpoints to the canonical presets. Other observed destinations
-were already covered by the quality preset or the resolved OpenAI CLI review
-preset. Block-mode validation is required; a failed authentication run does not
-prove inference works.
+those artifact endpoints to the canonical presets. The failed OpenAI audit also
+contacted `chatgpt.com`, which is absent from the pinned OpenAI CLI preset.
+It is intentionally excluded now that this repository uses Claude CLI; no
+successful OpenAI inference is claimed. The remaining observed destinations
+matched the pinned quality/OpenAI presets. Block-mode validation is required;
+a failed authentication run does not prove inference works.
 
 The first non-draft run must demonstrate a real, complete lintro review, not a
 missing-secret or draft skip. App access and inherited credentials must be
@@ -45,8 +48,15 @@ initial AI run authenticated the review App but inference failed with an OpenAI
 CLI 401, producing no review. It is not a successful review gate. The repository
 now overrides the review variables to `anthropic`, `cli`, `claude-opus-5-5`,
 using the existing org CLI credential forwarding. Org defaults are unchanged.
-The next CI run must demonstrate actual authentication and complete review;
-configuration alone does not satisfy that gate.
+Block-mode Quality run `40302948520` and Claude CLI review run `40302949073`
+completed successfully at `bbd3db5`. Final non-draft verification must still
+cover the reviewed content at the final signed head.
+
+Fork PRs intentionally do not run the credential-bearing AI job. The aggregate
+check accepts skips, so a green aggregate alone is insufficient for merge. A
+maintainer must stage a fork's reviewed changes on a same-repository branch and
+obtain complete lintro CI review, independent Sol/Opus reviews and all current
+head checks there. No fork code receives review credentials or a write token.
 
 ## Outstanding gates
 
