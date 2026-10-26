@@ -52,8 +52,9 @@ Reject: distribution exposes it to recipients and agent-readable files.
 
 ### Personal API keys for all public users
 
-Reject as a public-flow fallback: contradicts the documented public-project
-rule absent provider approval.
+Reject: public consumers use a supported OAuth flow. Personal-key collection
+is not a fallback in this design. Changing that policy requires a superseding
+ADR, not an automatic exception when a provider answer arrives.
 
 ### Assume secretless OAuth/PKCE
 
@@ -84,3 +85,11 @@ walkthroughs; passing mocks cannot prove bunq's expiry, revocation, scope or
 draft-approval semantics. Revisit this ADR after dated provider answers and
 sandbox observations. No banking requests, registrations or credential changes
 were performed for this record.
+
+## Evidence
+
+The [authentication research record](../authentication.md) links the 11 official
+pages inspected on 2026-10-26 and distinguishes their statements from project
+recommendations. No provider support answer or observed banking contract has
+been obtained; native-flow, classification, scope and lifecycle questions stay
+open. Documentation review does not establish implemented authentication.
