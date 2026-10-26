@@ -1,0 +1,32 @@
+---
+name: Quality
+
+'on':
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+  merge_group:
+
+permissions: {}
+
+concurrency:
+  group: >-
+    quality-${{ github.event_name == 'pull_request' &&
+    github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  quality:
+    # yamllint disable-line rule:line-length
+    uses: lgtm-hq/lgtm-ci/.github/workflows/reusable-quality-lint.yml@9ea778eb4e6b876d60b7b3d7d0d0aee5182717bb # v0.78.0
+    permissions:
+      contents: read
+      packages: read
+    with:
+      egress-policy: block
+      allowed-endpoints-mode: append
+      allowed-endpoints: >-
+        results-receiver.actions.githubusercontent.com:443
+        *.blob.core.windows.net:443
