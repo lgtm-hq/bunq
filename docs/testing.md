@@ -58,8 +58,11 @@ and timers owned by the test; keep the network guard active. Await all work.
 `bun run verify:test-gates` deliberately runs failing selections and checks
 their diagnostics. It proves swallowed network attempts, assertionless tests,
 focused tests, empty selections and an unimported shipped module below coverage
-thresholds fail. Temporary files are removed in `finally`. Every Workspace CI
-job runs these probes; their intentional child failures are expected.
+thresholds fail. Probes run on a temporary copy of current Git-visible source,
+including uncommitted tests, with installed dependencies linked for execution.
+The copy is removed in `finally`. An interrupted process may leave temporary
+data outside the repository; it cannot leave injected source in the working
+checkout. Every Workspace CI job runs these probes; child failures are expected.
 The coverage probe requires all suites to pass and runs a successful control
 with only thresholds disabled, so unrelated hook failures cannot satisfy it.
 

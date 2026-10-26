@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
+import { cp, mkdtemp, mkdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { dirname, join } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
-const root = new URL("../", import.meta.url);
-const temporary = await mkdtemp(fileURLToPath(new URL(".test-gates-", root)));
-const uncovered = await mkdtemp(fileURLToPath(new URL("packages/gate-probe-", root)));
+const sourceRoot = new URL("../", import.meta.url);
+const sandbox = await mkdtemp(join(tmpdir(), "bunq-test-gates-"));
+const root = pathToFileURL(`${sandbox}/`);
+const temporary = join(sandbox, ".test-gates");
+const uncovered = join(sandbox, "packages", "gate-probe");
 const cases = [
   ["fetch", 'await fetch("https://network.invalid")'],
   ["http", 'http.get("http://network.invalid")'],
@@ -21,6 +25,30 @@ const cases = [
   ["assertionless", ""],
 ];
 try {
+  // Copy current source, including uncommitted tests, without ignored secrets,
+  // dependencies or reports. Probe mutations never enter the working checkout.
+  const files = spawnSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", "-z"], {
+    cwd: sourceRoot,
+    encoding: "utf8",
+  });
+  if (files.error) throw files.error;
+  assert.equal(files.status, 0, files.stderr);
+  for (const file of files.stdout.split("\0").filter(Boolean)) {
+    const destination = join(sandbox, file);
+    await mkdir(dirname(destination), { recursive: true });
+    try {
+      await cp(join(fileURLToPath(sourceRoot), file), destination);
+    } catch (error) {
+      // Unstaged deletions are current source state, not files to resurrect.
+      if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
+    }
+  }
+  await symlink(
+    fileURLToPath(new URL("node_modules", sourceRoot)),
+    join(sandbox, "node_modules"),
+    "dir",
+  );
+  await mkdir(temporary);
   await writeFile(
     `${temporary}/negative.test.ts`,
     `
@@ -118,8 +146,16 @@ afterAll(async () => {
   );
   await run({ include: [`${temporary}/focused.test.ts`] });
   const focused = JSON.parse(await readFile(`${temporary}/results.json`, "utf8"));
-  assert.match(JSON.stringify(focused), /only|allowOnly/);
-  await mkdir(`${uncovered}/src`);
+  assert.equal(focused.numPassedTests, 0);
+  const focusedAssertions = focused.testResults.flatMap((suite) => suite.assertionResults);
+  assert.equal(focusedAssertions.length, 1);
+  assert.equal(focusedAssertions[0].status, "failed");
+  assert(
+    focusedAssertions[0].failureMessages.some((message) =>
+      message.startsWith("Error: [Vitest] Unexpected .only modifier."),
+    ),
+  );
+  await mkdir(`${uncovered}/src`, { recursive: true });
   await writeFile(
     `${uncovered}/src/uncovered.ts`,
     "export function missingCoverage(value: boolean) { return value ? 1 : 0; }\n",
@@ -149,6 +185,5 @@ afterAll(async () => {
     "Test gates rejected network attempts, assertionless/focused/empty tests and uncovered source.",
   );
 } finally {
-  await rm(temporary, { recursive: true, force: true });
-  await rm(uncovered, { recursive: true, force: true });
+  await rm(sandbox, { recursive: true, force: true });
 }
