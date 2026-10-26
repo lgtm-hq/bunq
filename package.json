@@ -14,11 +14,19 @@
     "typecheck": "node scripts/workspace.mjs typecheck",
     "build": "node scripts/workspace.mjs build",
     "verify:packages": "node scripts/verify-packages.mjs",
-    "test:workspace": "bun run build && node --test tests/workspace.test.mjs"
+    "test:workspace": "bun run build && node --test tests/workspace.test.mjs",
+    "lint": "uv run --locked lintro chk",
+    "format": "uv run --locked lintro fmt"
   },
   "devDependencies": {
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
     "@types/node": "22.20.5",
-    "typescript": "5.9.3"
+    "markdownlint-cli2": "0.24.0",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "prettier": "3.9.4",
+    "typescript": "6.0.3"
   },
   "bunqWorkspace": {
     "scope": "lgtm-hq",
@@ -32,5 +40,8 @@
   "engines": {
     "node": "^22.14.0 || ^24.0.0 || ^26.0.0",
     "bun": "1.4.4"
+  },
+  "overrides": {
+    "katex": "0.18.2"
   }
 }

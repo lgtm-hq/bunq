@@ -12,14 +12,19 @@ const mode = process.argv[2];
 if (mode !== "build" && mode !== "typecheck") throw new Error("Expected build or typecheck");
 run([fileURLToPath(new URL("scripts/check-toolchain.mjs", root))]);
 run([fileURLToPath(new URL("scripts/generate.mjs", root))]);
-// Build mode checks both projects in dependency order and emits declarations.
+// Source checking needs no generated declarations; builds check the package graph.
 // A clean build prevents stale exports from surviving a renamed source file.
 if (mode === "build") {
   for (const directory of ["client", "mcp"]) {
     await rm(new URL(`packages/${directory}/dist/`, root), { recursive: true, force: true });
   }
 }
-run([fileURLToPath(new URL("node_modules/typescript/bin/tsc", root)), "--build", "--force"]);
+run([
+  fileURLToPath(new URL("node_modules/typescript/bin/tsc", root)),
+  ...(mode === "build"
+    ? ["--build", "tsconfig.build.json", "--force"]
+    : ["--project", "tsconfig.json"]),
+]);
 if (mode === "build") {
   for (const directory of ["client", "mcp"]) {
     await cp(new URL("LICENSE", root), new URL(`packages/${directory}/LICENSE`, root));

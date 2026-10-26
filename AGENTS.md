@@ -15,15 +15,17 @@ Bun manages the TypeScript workspace; packed packages run on the Node releases
 in the root manifest. Read [the workspace contract](docs/workspace.md) for exact
 pins and generated artifacts. Run `bun install --frozen-lockfile`,
 `bun run typecheck`, `bun run build`, `bun run test:workspace` and
-`bun run verify:packages`. Typechecking emits through project references;
-there is no separate no-emit promise. Regenerate derived metadata with
-`bun run generate` and commit the result.
+`bun run verify:packages`. Typechecking checks both source packages without
+emitting; builds separately check project references and emit declarations.
+Regenerate derived metadata with `bun run generate` and commit the result.
 
-uv manages lintro. Until quality setup (#13) defines its uv project, run
-`uv run --no-project lintro fmt` and `uv run --no-project lintro chk`.
+uv manages the locked lintro environment. Run `uv sync --locked`, then
+`uv run lintro fmt` and `uv run lintro chk`; `bun run format` and
+`bun run lint` use the same commands with locked dependency resolution.
+Read [the quality guide](docs/development.md) for setup and generated files.
 Run full checks without tool filters. The Workspace CI matrix checks real
-package consumers, but full behavioural coverage (#14), quality setup (#13)
-and CI onboarding (#17) remain open. Never invent a successful missing check.
+package consumers, but full behavioural coverage (#14) and CI onboarding
+(#17) remain open. Never invent a successful missing check.
 
 ## Identity routing
 
@@ -56,7 +58,8 @@ content it carries. Do not count draft-skipped review jobs as verification.
 Merge only with all required work successful at the current head, all actionable
 review threads resolved and all applicable approval requirements satisfied.
 Use a pinned-head squash merge or the required merge queue; keep automerge off
-while triaging. Do not bypass protections or manufacture green checks. After merge,
+while triaging. Do not bypass protections or manufacture green checks. After
+merge,
 verify the exact main commit's push checks before proceeding to another merge.
 If bootstrap checks are absent, keep the PR open and report the unmet gate.
 

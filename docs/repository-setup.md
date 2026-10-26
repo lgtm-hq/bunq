@@ -1,7 +1,8 @@
 # Repository bootstrap status
 
 The foundation adds a documentation/workflow quality baseline so the first PR
-can be reviewed through CI. It does not complete the [bootstrap epic][bootstrap].
+can be reviewed through CI. It does not complete the [bootstrap
+epic][bootstrap].
 
 ## Initial review base
 
@@ -61,8 +62,9 @@ head checks there. No fork code receives review credentials or a write token.
 ## Outstanding gates
 
 The [workspace contract](workspace.md) defines package pins, builds and packed
-consumer CI. Full local lintro setup (#13), behavioural tests and coverage
-(#14), complete CI/runtime checks (#17), layered security (#21),
+consumer CI. The [quality guide](development.md) defines locked local checks.
+Behavioural tests and coverage (#14), complete CI/runtime checks (#17),
+layered security (#21),
 review-app/contributor onboarding (#22), live protections (#26) and the final
 bootstrap acceptance (#33) remain separate work. The baseline does not claim
 these capabilities are complete. The operating agreement follows the org
