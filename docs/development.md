@@ -60,12 +60,17 @@ discriminated unions and narrow unknown input; suppressions and casts need
 specific justification.
 
 Repository-only declarations in `types/untrusted-json` make `JSON.parse`
-return `unknown`, including with a reviver, and `Body.json()` return
-`Promise<unknown>`. Both source checking and package builds inherit these
-types through the root type configuration. Validate the decoded value before
-assigning a domain type; a typed destination is not validation. These ambient
+return `unknown`, including with a reviver, `Body.json()` return
+`Promise<unknown>` and `Array.isArray()` narrow to `unknown[]`. Source checking
+and package builds inherit these types through the root configuration.
+Validate decoded values before assigning a domain type; a typed destination
+is not validation. These ambient
 declarations are development inputs and are not copied into published packages.
 They do not add runtime validation or replace the response-contract work in #32.
+Other reflective APIs such as `Reflect.get` can still return implicit `any`.
+Keep their results as `unknown` and validate them; review must enforce that
+boundary until type-aware unsafe-flow linting is available. #32 must verify
+these paths before financial response parsing is introduced.
 
 ## Formatting and generated files
 
