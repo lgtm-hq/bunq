@@ -28,7 +28,7 @@ jobs:
       # Released image for the locally pinned Lintro; digest cannot be wrapped.
       # yamllint disable-line rule:line-length
       lintro-image: ghcr.io/lgtm-hq/py-lintro@sha256:116e60912a8c7a2002349ef096cfa93644314492751746aacdd5ef228c74306f
-      egress-policy: block
+      egress-policy: audit # TEMP: lgtm-hq/lgtm-ci#1207
       allowed-endpoints-mode: append
       allowed-endpoints: >-
         results-receiver.actions.githubusercontent.com:443
