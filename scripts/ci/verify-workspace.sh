@@ -11,6 +11,7 @@ assert_clean() {
 }
 
 bun install --frozen-lockfile
+node --test tests/merge-message.test.mjs
 bun run generate
 # Generated metadata must be committed. Regenerate instead of maintaining mirrors.
 assert_clean

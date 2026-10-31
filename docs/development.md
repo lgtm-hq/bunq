@@ -72,6 +72,56 @@ Keep their results as `unknown` and validate them; review must enforce that
 boundary until type-aware unsafe-flow linting is available. #32 must verify
 these paths before financial response parsing is introduced.
 
+## Squash merge messages
+
+Quality runs `lintro chk .` with no commit-range override. The
+[pinned Lintro commitlint plugin][commitlint-plugin] invokes `commitlint --last`,
+so it checks only the checked-out commit, not its ancestors. PR checks cannot
+validate a future squash message. The repository's squash defaults copy commit
+messages (`COMMIT_MESSAGES`); they can introduce overlong body or footer lines.
+Main `48f1e6f6cc0b4a7e3de1785f3a053d2a72b216cc` failed both 100-character rules;
+the previous main `362eb621199c6d1b9fa8a0323209a4d64ba515b8` failed the body rule.
+A compliant new commit can pass this check without rewriting either ancestor.
+Only actual push checks on the resulting main SHA establish recovery.
+
+Before merging, write a separate, concise Conventional Commit message with
+LF line endings: subject, blank line, then body and any footer. Wrap body and
+footer lines to at most 100 characters. Do not copy the PR description or accept
+GitHub's generated message. The helper uses `.commitlintrc.json` and the actual
+commitlint CLI; it neither rewrites text nor changes rules or installs tools.
+It prefers the workspace dependency and fails if commitlint cannot run.
+
+Run the focused regression tests with `node --test tests/merge-message.test.mjs`.
+The Workspace CI script runs them with the installed workspace dependencies.
+After independent reviews and all current-head checks and approvals succeed,
+use the following in a shell script with `pr` and `reviewed_head` set to the
+approved PR number and exact reviewed SHA. Adapt the message to the change.
+
+```sh
+set -eu
+merge_scratch="$(mktemp -d "${TMPDIR:-/tmp}/bunq-merge.XXXXXX")"
+trap 'rm -rf "$merge_scratch"' EXIT
+cat > "$merge_scratch/message.txt" <<'EOF'
+fix(ci): validate explicit squash messages
+
+Validate the complete squash message against the repository's commitlint rules.
+Require explicit merge metadata so generated text cannot repeat the failure.
+
+Refs: #91
+EOF
+node scripts/check-merge-message.mjs "$merge_scratch/message.txt"
+tail -n +3 "$merge_scratch/message.txt" > "$merge_scratch/body.txt"
+lgtm-ai gh pr merge "$pr" --squash --match-head-commit "$reviewed_head" \
+  --subject "$(sed -n '1p' "$merge_scratch/message.txt")" \
+  --body-file "$merge_scratch/body.txt"
+```
+
+Do not edit the message after validation; validate again if it changes.
+Run `lgtm-ai doctor --quiet` first if identity readiness is not established.
+Keep automerge off during triage. If a queue is required, preserve the validated
+metadata through the queue and follow its contract without bypassing it.
+Verify the exact resulting main commit's push checks before the next merge.
+
 ## Formatting and generated files
 
 The generator owns package metadata and its generated TypeScript constants.
@@ -118,3 +168,4 @@ root-relative outputs are exempt. Structured reports are written under
 `.lintro/artifacts/json/` for checking the specific tool and diagnostic.
 
 [katex-advisory]: https://github.com/advisories/GHSA-238p-pmpm-9mq7
+[commitlint-plugin]: https://github.com/lgtm-hq/py-lintro/blob/v0.173.1/lintro/tools/commitlint/definition.py
