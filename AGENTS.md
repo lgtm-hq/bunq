@@ -58,7 +58,12 @@ content it carries. Do not count draft-skipped review jobs as verification.
 Merge only with all required work successful at the current head, all actionable
 review threads resolved and all applicable approval requirements satisfied.
 Use a pinned-head squash merge or the required merge queue; keep automerge off
-while triaging. Do not bypass protections or manufacture green checks. After
+while triaging. Before a squash merge, validate the complete message file with
+`node scripts/check-merge-message.mjs <message-file>`. The merge command must
+supply explicit `--subject` and `--body-file` values from that validated file;
+follow [the merge-message procedure](docs/development.md#squash-merge-messages).
+Do not accept GitHub's generated squash text or reuse the PR description.
+Do not bypass protections or manufacture green checks. After
 merge, verify the exact main commit's push checks before proceeding to another
 merge.
 If bootstrap checks are absent, keep the PR open and report the unmet gate.
