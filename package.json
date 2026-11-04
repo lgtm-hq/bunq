@@ -23,7 +23,7 @@
     "@commitlint/config-conventional": "21.2.4",
     "@types/node": "22.20.5",
     "markdownlint-cli2": "0.24.0",
-    "oxfmt": "0.72.0",
+    "oxfmt": "0.75.0",
     "oxlint": "1.87.0",
     "prettier": "3.9.10",
     "typescript": "6.0.3"
