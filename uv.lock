@@ -39,7 +39,7 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "lintro", specifier = "==0.177.19" },
+    { name = "lintro", specifier = "==0.177.20" },
     { name = "yamllint", specifier = "==1.38.0" },
 ]
 
@@ -136,7 +136,7 @@ wheels = [
 
 [[package]]
 name = "lintro"
-version = "0.177.19"
+version = "0.177.20"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -152,9 +152,9 @@ dependencies = [
     { name = "tabulate" },
     { name = "watchdog" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/74/4a/3a9f9ba9416476a07821017ae8a8002e794da1636c5eecd35118b58dc1f7/lintro-0.177.19.tar.gz", hash = "sha256:4b3d208b98ae44d70b371db6e04b6a66eb56d5dc858811cfd07fdef967a92736", size = 3148446, upload-time = "2026-11-04T19:00:30.237Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/0a/51/239531135392890ea2fa26e626512f7f1ca3c0568f3cca3f66234eac544a/lintro-0.177.20.tar.gz", hash = "sha256:657e8aa9841f157bac8e30fd902b580ea8a30ce54a381b486211faa1c2c29588", size = 3148302, upload-time = "2026-11-04T21:31:30.605Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e1/62/b8d7965208f1c9dbd2e0c4dd55a0920a27e65795f1b2dc48c4c8d815a036/lintro-0.177.19-py3-none-any.whl", hash = "sha256:f95173e8d035d684689e039444cc901c3540d0e684a3091ac800448d915d4733", size = 2154438, upload-time = "2026-11-04T19:00:27.127Z" },
+    { url = "https://files.pythonhosted.org/packages/b9/b1/4cc171ede8cdfd41710cce6471064499cbac9417b6d71a447cccae576b19/lintro-0.177.20-py3-none-any.whl", hash = "sha256:fc4f648c007c9b5d94b4381096f9f909c365369ded9f617e084f7457dbbaf959", size = 2154439, upload-time = "2026-11-04T21:31:28.446Z" },
 ]
 
 [[package]]
