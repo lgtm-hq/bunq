@@ -59,6 +59,29 @@ Co-authored-by: lgtm-ai-bot[bot] <306309947+lgtm-ai-bot[bot]@users.noreply.githu
   assert.match(result.stdout, /\[body-max-line-length\]/);
 });
 
+it("rejects the explicit PR93 squash message even though its subject passes", async () => {
+  const result = await check(`chore(deps): update prettier and repair secure AI review
+
+Update Prettier to 3.9.10 and adopt the released secure AI review workflow with explicit Codex OAuth forwarding.
+
+Full source, supply-chain, independent Sol and Sonnet reviews, Lintro review and genuine current-head CI evidence are recorded on PR93.
+`);
+  assert.equal(result.status, 1, result.stderr);
+  assert.match(result.stdout, /\[body-max-line-length\]/);
+});
+
+it("accepts the wrapped PR93 message without changing its content", async () => {
+  const result = await check(`chore(deps): update prettier and repair secure AI review
+
+Update Prettier to 3.9.10 and adopt the released secure AI review workflow
+with explicit Codex OAuth forwarding.
+
+Full source, supply-chain, independent Sol and Sonnet reviews, Lintro review
+and genuine current-head CI evidence are recorded on PR93.
+`);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+});
+
 it("accepts an explicit compliant squash message with body and footer", async () => {
   const result = await check(`fix(ci): validate explicit squash messages
 

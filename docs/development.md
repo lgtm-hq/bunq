@@ -91,6 +91,16 @@ GitHub's generated message. The helper uses `.commitlintrc.json` and the actual
 commitlint CLI; it neither rewrites text nor changes rules or installs tools.
 It prefers the workspace dependency and fails if commitlint cannot run.
 
+An explicit custom subject and body are not a preflight: main
+`43c53bf1ad44c8cc8d8f9aafac5a23653106025d` still failed `body-max-line-length`
+after PR #93 passed its checks. Its manually supplied body had overlong lines.
+Validate the **complete final message**, not just its subject, PR head, or an
+older draft. Include every body paragraph and footer/trailer that will be
+submitted. Re-run the helper after any edit, including issue references or
+review summaries. Keep long review evidence in the PR instead of the squash
+body. Never weaken commitlint or rewrite a merged commit to repair this failure;
+a compliant new commit still needs real main push checks to prove recovery.
+
 Run the focused regression tests with `node --test tests/merge-message.test.mjs`.
 The Workspace CI script runs them with the installed workspace dependencies.
 After independent reviews and all current-head checks and approvals succeed,
