@@ -4,7 +4,7 @@ version = "0.0.0"
 requires-python = ">=3.13,<3.15"
 
 [dependency-groups]
-dev = ["lintro==0.177.24", "yamllint==1.38.0"]
+dev = ["lintro==0.177.26", "yamllint==1.38.0"]
 
 [tool.uv]
 package = false
